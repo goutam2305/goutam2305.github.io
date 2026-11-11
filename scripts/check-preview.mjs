@@ -7,13 +7,18 @@ const response = await fetch(preview);
 assert.equal(response.status, 200);
 const html = await response.text();
 assert.ok(html.includes('Tools — GOUTAM Lab'));
-for (const filename of ['ez-topology.webp', 'segmentation.webp', 'generate-mesh.webp']) {
+for (const filename of ['ez-topology.webp']) {
   const asset = await fetch(new URL(`assets/${filename}`, preview));
   assert.equal(asset.status, 200, filename);
   assert.ok(asset.headers.get('content-type').startsWith('image/'), filename);
   const bytes = (await asset.arrayBuffer()).byteLength;
   assert.ok(bytes > 1000, filename);
   console.log(`OK ${filename}: ${bytes} bytes`);
+}
+for (const filename of ['docs/E-Z-Topology-Guide.md', 'docs/E-Z-Topology-Guide.pdf']) {
+  const attachment = await fetch(new URL(filename, preview));
+  assert.equal(attachment.status, 200, filename);
+  assert.ok((await attachment.arrayBuffer()).byteLength > 1000, filename);
 }
 
 const publicFiles = await readdir('dist/client', { recursive: true, withFileTypes: true });

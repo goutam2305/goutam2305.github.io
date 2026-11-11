@@ -4,6 +4,8 @@ import { projects, filterProjects, getDownloadUrl, parseRoute, getInitialTheme }
 
 test('E-Z Topology is first; Maya is planned, not a current platform', () => {
   assert.equal(projects[0].name, 'E-Z Topology');
+  assert.equal(projects.length, 1);
+  assert.equal(projects[0].documentationUrl, '#/docs/ez-topology');
   assert.deepEqual(projects[0].platforms, ['3ds Max']);
   assert.deepEqual(projects[0].plannedPlatforms, ['Maya']);
   assert.equal(new Set(projects.map((p) => p.id)).size, projects.length);
@@ -20,7 +22,7 @@ test('available means an actual HTTPS release, not a beta status badge', () => {
 
 test('filters preserve ordering and expose the expected development projects', () => {
   assert.deepEqual(filterProjects(projects, 'all'), projects);
-  assert.deepEqual(filterProjects(projects, 'development').map((p) => p.id), ['segmentation', 'generate-mesh']);
+  assert.deepEqual(filterProjects(projects, 'development'), []);
   assert.deepEqual(filterProjects(projects, 'unknown'), projects);
 });
 
@@ -28,7 +30,9 @@ test('static hash routes support direct links and reject malformed paths', () =>
   for (const hash of ['', '#', '#/', '#/tools']) assert.equal(parseRoute(hash).page, 'tools');
   assert.equal(parseRoute('#/about').page, 'about');
   assert.equal(parseRoute('#/tools/ez-topology').project.name, 'E-Z Topology');
-  for (const hash of ['#/tools/unknown', '#/tools/%zz', '#/tools/../../about', '#/tutorials']) {
+  assert.equal(parseRoute('#/docs/ez-topology').page, 'documentation');
+  assert.equal(parseRoute('#/docs/ez-topology?section=patches').section, 'patches');
+  for (const hash of ['#/tools/unknown', '#/tools/segmentation', '#/tools/generate-mesh', '#/tools/%zz', '#/tools/../../about', '#/tutorials']) {
     assert.equal(parseRoute(hash).page, 'not-found');
   }
 });

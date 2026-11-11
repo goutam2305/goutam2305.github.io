@@ -11,19 +11,22 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 4173 --strictPort
 ```
 
-Open http://127.0.0.1:4173 in your normal browser. The server binds only to your local machine. No VPN, proxy, browser security settings or browser automation is needed.
+Open http://127.0.0.1:4173 in your normal browser. The server binds only to your local machine. No VPN, proxy or browser security settings need to change.
 
 ## Checks and production build
 
 ```sh
 npm test
 npm run test:ui
+npm run test:browser
 npm run build
 npm run test:sites
 npm run preview -- --host 127.0.0.1 --port 4173 --strictPort
 ```
 
 The deployable static website is **dist/client**, not the entire development folder. The starter also retains an unused Sites worker for hosting portability; GitHub Pages publishes only dist/client.
+
+Browser checks use an isolated standard Chrome through Playwright against localhost. Chrome must already be installed. No custom proxy or browser-security bypass is configured.
 
 ## GitHub Pages setup
 
@@ -48,8 +51,20 @@ Edit **src/projects.js**. Project order in that array is the gallery order. Each
 - UI theme tokens and responsive styling live in **src/styles.css**.
 - Header navigation is intentionally limited to Tools and About. Filters are a compact disclosure menu. The footer is copyright and back to top.
 
+## E-Z Topology documentation and recordings
+
+Only E-Z Topology is currently listed. Its product page contains a ten-part tool guide: the nine toolbar tools plus the Patches workflow for connecting boundaries.
+
+- **src/guide.js** is the shared source for the online guide and downloadable Markdown. It describes the current beta's actual settings, controls, workflows and limits.
+- **public/demos/** contains real scripted captures of the tool running in 3ds Max 2026. Native viewport, actual cage/guide overlay and actual toolbar captures are composed together. They are not physical mouse recordings or generated animations.
+- Every demo has a WebP poster. Animation loads only after Play is selected; switching tools returns to a paused poster.
+- **src/demoManifest.json** is regenerated from the actual GIF and poster files during build. Missing recordings stop the build.
+- **public/docs/E-Z-Topology-Guide.md** is regenerated during build.
+- **public/docs/E-Z-Topology-Guide.pdf** is a checked-in printable export. To refresh it, start the local preview and run `node scripts/generate-pdf.mjs`, then commit the resulting PDF. This browser step stays outside the lightweight Pages build.
+- Online guide: `#/docs/ez-topology`. Chapter links use `?section=draw`, `?section=patches`, etc., so static hosting supports deep links.
+
 ## Assets and dependencies
 
-The three project illustrations were generated specifically for this concept; they are not screenshots of real tool output. They are labeled illustrative previews on the detail pages. Fonts are self-hosted Pixelify Sans and DM Sans from Fontsource; interface icons are Phosphor. See **THIRD_PARTY_NOTICES.md** for their licenses.
+The gallery cover illustration was generated specifically for this concept and is labeled an illustrative preview. The ten demonstration recordings are actual native tool captures, as described above. Fonts are self-hosted Pixelify Sans and DM Sans from Fontsource; interface icons are Phosphor. See **THIRD_PARTY_NOTICES.md** for their licenses.
 
 No public license has been selected for the site's original code or the tool packages. Do not imply that a free download is an open-source release.

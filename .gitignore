@@ -3,8 +3,8 @@ dist/
 artifacts/
 .superpowers/
 design-qa.md
-AGENTS.md
-docs/
+/AGENTS.md
+/docs/
 *.local
 .env*
 !.env.example

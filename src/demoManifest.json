@@ -1,0 +1,72 @@
+{
+  "draw": {
+    "src": "demos/draw.gif",
+    "poster": "demos/draw.webp",
+    "width": 960,
+    "height": 646,
+    "description": "Four clicks create the first quad. Further faces reuse the active border."
+  },
+  "select": {
+    "src": "demos/select.gif",
+    "poster": "demos/select.webp",
+    "width": 960,
+    "height": 646,
+    "description": "Gold selected edges persist when you switch tools."
+  },
+  "strips": {
+    "src": "demos/strips.gif",
+    "poster": "demos/strips.webp",
+    "width": 960,
+    "height": 646,
+    "description": "Stroke release creates geometry automatically; orange handles can reshape it."
+  },
+  "strokes": {
+    "src": "demos/strokes.gif",
+    "poster": "demos/strokes.webp",
+    "width": 960,
+    "height": 646,
+    "description": "A second compatible rail creates quads between the two rails."
+  },
+  "patches": {
+    "src": "demos/patches.gif",
+    "poster": "demos/patches.webp",
+    "width": 960,
+    "height": 646,
+    "description": "A green patch preview is confirmed with Enter."
+  },
+  "connect": {
+    "src": "demos/connect.gif",
+    "poster": "demos/connect.webp",
+    "width": 960,
+    "height": 646,
+    "description": "New quads reuse the selected seam vertices exactly."
+  },
+  "contours": {
+    "src": "demos/contours.gif",
+    "poster": "demos/contours.webp",
+    "width": 960,
+    "height": 646,
+    "description": "A second closed section creates a quad band automatically."
+  },
+  "loops": {
+    "src": "demos/loops.gif",
+    "poster": "demos/loops.webp",
+    "width": 960,
+    "height": 646,
+    "description": "Hover feedback identifies the affected loop before insertion or sliding."
+  },
+  "tweak": {
+    "src": "demos/tweak.gif",
+    "poster": "demos/tweak.webp",
+    "width": 960,
+    "height": 646,
+    "description": "The brush circle shows the influence radius before the stroke."
+  },
+  "relax": {
+    "src": "demos/relax.gif",
+    "poster": "demos/relax.webp",
+    "width": 960,
+    "height": 646,
+    "description": "Local brush passes respect the source surface and protected vertices."
+  }
+}

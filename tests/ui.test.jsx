@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 
 // DOM-level tests only: no browser process, automation driver or external requests.
-const dom = new JSDOM('<!doctype html><html><body></body></html>', { url: 'http://127.0.0.1:4173/' });
+const dom = new JSDOM('<!doctype html><html><body></body></html>', { url: 'http://127.0.0.1:4173/', pretendToBeVisual: true });
 for (const key of ['window', 'document', 'HTMLElement', 'Node', 'MutationObserver', 'localStorage']) {
   Object.defineProperty(globalThis, key, { value: dom.window[key], configurable: true, writable: true });
 }
@@ -18,6 +18,7 @@ const media = {
 };
 window.matchMedia = () => media;
 window.scrollTo = () => {};
+window.HTMLElement.prototype.scrollIntoView = () => {};
 
 const { render, screen, cleanup, within, waitFor, act } = await import('@testing-library/react');
 const { default: userEvent } = await import('@testing-library/user-event');
@@ -32,12 +33,14 @@ afterEach(() => {
   media.matches = false;
 });
 
-test('gallery has only Tools/About navigation, three real images and a quiet footer', () => {
+test('gallery has only E-Z Topology, Tools/About navigation and a quiet footer', () => {
   render(<App />);
   const navigation = screen.getByRole('navigation', { name: 'Main navigation' });
   assert.deepEqual(within(navigation).getAllByRole('link').map((link) => link.textContent), ['Tools', 'About']);
-  assert.equal(screen.getAllByRole('article').length, 3);
-  assert.equal(screen.getAllByRole('img').length, 3);
+  assert.equal(screen.getAllByRole('article').length, 1);
+  assert.equal(screen.getAllByRole('img').length, 1);
+  assert.equal(screen.queryByText('Segmentation'), null);
+  assert.equal(screen.queryByText('Generate Mesh'), null);
   assert.equal(screen.getByRole('heading', { name: 'E-Z Topology' }).tagName, 'H2');
   assert.equal(screen.getByRole('contentinfo').querySelectorAll('nav, a').length, 0);
   assert.ok(screen.getByRole('button', { name: 'Back to top' }));
@@ -67,7 +70,7 @@ test('selection filters results, indicates active filtering and restores trigger
   const input = user();
   await input.click(screen.getByRole('button', { name: 'Filter tools: All tools' }));
   await input.click(screen.getByRole('menuitemradio', { name: 'In development' }));
-  assert.equal(screen.getAllByRole('article').length, 2);
+  assert.equal(screen.queryAllByRole('article').length, 0);
   assert.equal(screen.queryByRole('heading', { name: 'E-Z Topology' }), null);
   const trigger = screen.getByRole('button', { name: 'Filter tools: In development' });
   assert.equal(document.activeElement, trigger);
@@ -82,7 +85,7 @@ test('Available has an honest empty state until a public release exists, with a 
   assert.equal(screen.queryAllByRole('article').length, 0);
   assert.ok(screen.getByRole('heading', { name: 'Getting ready to share.' }));
   await input.click(screen.getByRole('button', { name: 'Show all tools' }));
-  assert.equal(screen.getAllByRole('article').length, 3);
+  assert.equal(screen.getAllByRole('article').length, 1);
   assert.equal(document.activeElement, screen.getByRole('heading', { name: 'Tools' }));
 });
 
@@ -144,12 +147,37 @@ test('tool and About navigation work without inventing download links', async ()
 });
 
 test('direct project links and unknown routes display the correct page', async () => {
-  window.history.replaceState(null, '', '/#/tools/segmentation');
+  window.history.replaceState(null, '', '/#/tools/ez-topology');
   render(<App />);
-  assert.ok(screen.getByRole('heading', { level: 1, name: 'Segmentation' }));
+  assert.ok(screen.getByRole('heading', { level: 1, name: 'E-Z Topology' }));
   await act(async () => {
     window.history.replaceState(null, '', '/#/missing');
     window.dispatchEvent(new window.HashChangeEvent('hashchange'));
   });
   assert.ok(screen.getByRole('heading', { name: 'This page isn’t in the lab.' }));
+});
+
+test('each tool tab exposes its guide and a controllable recorded demo', async () => {
+  window.history.replaceState(null, '', '/#/tools/ez-topology');
+  render(<App />);
+  const input = user();
+  assert.equal(screen.getAllByRole('tab').length, 10);
+  await input.click(screen.getByRole('tab', { name: 'Patches' }));
+  assert.ok(screen.getByRole('button', { name: 'Play Patches demo' }));
+  await input.click(screen.getByRole('button', { name: 'Play Patches demo' }));
+  assert.ok(screen.getByRole('button', { name: 'Pause Patches demo' }));
+  await input.click(screen.getByRole('tab', { name: 'Connect boundaries' }));
+  assert.ok(screen.getByRole('button', { name: 'Play Connect boundaries demo' }));
+  assert.ok(screen.getByRole('table', { name: 'Connect boundaries settings' }));
+});
+
+test('documentation is linked from the product and includes downloadable guides', async () => {
+  window.history.replaceState(null, '', '/#/tools/ez-topology');
+  render(<App />);
+  await user().click(screen.getByRole('link', { name: 'Read documentation' }));
+  await waitFor(() => assert.ok(screen.getByRole('heading', { level: 1, name: /E-Z Topology\s*documentation/ })));
+  assert.ok(screen.getByRole('navigation', { name: 'Documentation chapters' }));
+  assert.ok(screen.getByRole('link', { name: 'Download guide' }).getAttribute('download') !== null);
+  assert.ok(screen.getByRole('link', { name: 'PDF' }).href.endsWith('.pdf'));
+  assert.equal(screen.getAllByRole('figure').length, 10);
 });

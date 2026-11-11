@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prepare-sites-build.mjs",
+    "build": "node scripts/generate-demo-manifest.mjs && node scripts/generate-guide.mjs && vite build && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
     "test:sites": "node --test tests/sites-worker.test.mjs",
-    "test": "node --test tests/portfolio.test.mjs",
+    "test": "node --test tests/portfolio.test.mjs tests/guide.test.mjs",
+    "test:browser": "playwright test",
     "test:ui": "node --import tsx --test tests/ui.test.jsx"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "vite": "6.4.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "jsdom": "^26.1.0",

@@ -8,7 +8,7 @@ export function Header({ page, theme, toggleTheme }) {
       <a href="#/" className="wordmark" aria-label="GOUTAM Lab home">GOUTAM Lab<span className="brand-cursor" aria-hidden="true">_</span></a>
       <div className="header-actions">
         <nav aria-label="Main navigation">
-          <a href="#/" aria-current={page === 'tools' || page === 'project' ? 'page' : undefined}>Tools</a>
+          <a href="#/" aria-current={['tools', 'project', 'documentation'].includes(page) ? 'page' : undefined}>Tools</a>
           <a href="#/about" aria-current={page === 'about' ? 'page' : undefined}>About</a>
         </nav>
         <button className="icon-button theme-toggle" onClick={toggleTheme} aria-label={label} title={label} aria-pressed={theme === 'dark'}>

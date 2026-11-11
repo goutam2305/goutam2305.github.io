@@ -4,6 +4,8 @@ import { Header } from './components/Header';
 import { AboutPage, NotFoundPage, ProjectPage, ToolsPage } from './pages';
 import { parseRoute } from './projects';
 import { useTheme } from './useTheme';
+import { DocumentationPage } from './DocumentationPage';
+import { scrollToChapter } from './chapterNavigation';
 
 export function App() {
   const [hash, setHash] = useState(() => window.location.hash);
@@ -18,11 +20,15 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
   useEffect(() => {
-    const label = route.page === 'project' ? route.project.name : route.page === 'about' ? 'About' : route.page === 'not-found' ? 'Page not found' : 'Tools';
+    const label = route.page === 'project' ? route.project.name : route.page === 'documentation' ? 'E-Z Topology documentation' : route.page === 'about' ? 'About' : route.page === 'not-found' ? 'Page not found' : 'Tools';
     document.title = `${label} — GOUTAM Lab`;
-    if (firstRender.current) { firstRender.current = false; return; }
+    if (firstRender.current) { firstRender.current = false; if (!(route.page === 'documentation' && route.section)) return; }
     window.scrollTo({ top: 0, behavior: 'instant' });
     main.current?.focus({ preventScroll: true });
+    if (route.page === 'documentation' && route.section) {
+      const frame = window.requestAnimationFrame(() => scrollToChapter(route.section));
+      return () => window.cancelAnimationFrame(frame);
+    }
   }, [hash]);
   const backToTop = () => {
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -37,6 +43,7 @@ export function App() {
         {route.page === 'tools' && <ToolsPage filter={filter} setFilter={setFilter} />}
         {route.page === 'project' && <ProjectPage project={route.project} />}
         {route.page === 'about' && <AboutPage />}
+        {route.page === 'documentation' && <DocumentationPage section={route.section} />}
         {route.page === 'not-found' && <NotFoundPage />}
       </main>
       <footer className="site-footer"><small>© 2026 GOUTAM Lab</small><button className="icon-button back-to-top" onClick={backToTop} aria-label="Back to top" title="Back to top"><ArrowUp size={20} aria-hidden="true" /></button></footer>
