@@ -51,7 +51,7 @@ export function ToolGuide() {
         {toolGuide.map((item) => <button key={item.id} role="tab" id={`tool-tab-${item.id}`} aria-selected={selected === item.id}
           tabIndex={selected === item.id ? 0 : -1} aria-controls={`tool-panel-${item.id}`} onClick={() => setSelected(item.id)}>{item.name}</button>)}
       </div>
-      <div className="guide-panel" role="tabpanel" id={`tool-panel-${tool.id}`} aria-labelledby={`tool-tab-${tool.id}`} tabIndex={0}>
+      <div className="guide-panel" key={tool.id} role="tabpanel" id={`tool-panel-${tool.id}`} aria-labelledby={`tool-tab-${tool.id}`} tabIndex={0}>
         <div className="guide-demo"><h3>{tool.name}</h3><p>{tool.summary}</p><DemoPlayer key={tool.id} id={tool.id} title={tool.name} /><p className="demo-result">{tool.result}</p>{tool.toolbar && <p className="tool-parent">This workflow uses the {tool.toolbar} tool.</p>}</div>
         <ToolInstructions tool={tool} />
       </div>

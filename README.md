@@ -59,7 +59,7 @@ Only E-Z Topology is currently listed. Its product page contains a ten-part tool
 
 - **src/guide.js** is the shared source for the online guide and downloadable Markdown. It describes the current beta's actual settings, controls, workflows and limits.
 - **public/demos/** contains real scripted captures of the tool running in 3ds Max 2026. Native viewport, actual cage/guide overlay and actual toolbar captures are composed together. They are not physical mouse recordings or generated animations.
-- Every demo has a WebP poster. Animation loads only after Play is selected; switching tools returns to a paused poster.
+- Every demo has a WebP poster. Visible demos autoplay and loop; offscreen, hidden-tab and print views use still posters. A discreet hover/focus pause icon provides control. Reduced-motion preferences default to still frames with optional explicit animation.
 - **src/demoManifest.json** is regenerated from the actual GIF and poster files during build. Missing recordings stop the build.
 - **public/docs/E-Z-Topology-Guide.md** is regenerated during build.
 - **public/docs/E-Z-Topology-Guide.pdf** is a checked-in printable export. To refresh it, start the local preview and run `node scripts/generate-pdf.mjs`, then commit the resulting PDF. This browser step stays outside the lightweight Pages build.
@@ -67,6 +67,10 @@ Only E-Z Topology is currently listed. Its product page contains a ten-part tool
 
 ## Assets and dependencies
 
-The gallery cover illustration was generated specifically for this concept and is labeled an illustrative preview. The ten demonstration recordings are actual native tool captures, as described above. Fonts are self-hosted Pixelify Sans and DM Sans from Fontsource; interface icons are Phosphor. See **THIRD_PARTY_NOTICES.md** for their licenses.
+The gallery cover illustration was generated specifically for this concept and is labeled an illustrative preview. The ten demonstration recordings are actual native tool captures, as described above. Fonts are self-hosted Pixelify Sans and IBM Plex Mono from Fontsource; interface icons are Phosphor. See **THIRD_PARTY_NOTICES.md** for their licenses.
+
+The visual system uses a tinted sticky header, deep red/burgundy footer, blinking logo cursor, restrained entry/hover/tab motion and a documentation reading-progress line. Reduced motion disables decorative animation. Scroll feedback uses an animation-frame scheduler without re-rendering the documentation.
+
+Click the logo's underscore to pause/resume its blink; this preference is remembered. Individual GIFs have discreet pause/resume controls on hover or keyboard focus.
 
 No public license has been selected for the site's original code or the tool packages. Do not imply that a free download is an open-source release.

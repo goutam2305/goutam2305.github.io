@@ -163,11 +163,11 @@ test('each tool tab exposes its guide and a controllable recorded demo', async (
   const input = user();
   assert.equal(screen.getAllByRole('tab').length, 10);
   await input.click(screen.getByRole('tab', { name: 'Patches' }));
-  assert.ok(screen.getByRole('button', { name: 'Play Patches demo' }));
-  await input.click(screen.getByRole('button', { name: 'Play Patches demo' }));
-  assert.ok(screen.getByRole('button', { name: 'Pause Patches demo' }));
+  assert.ok(screen.getByRole('button', { name: 'Pause Patches animation' }));
+  await input.click(screen.getByRole('button', { name: 'Pause Patches animation' }));
+  assert.ok(screen.getByRole('button', { name: 'Resume Patches animation' }));
   await input.click(screen.getByRole('tab', { name: 'Connect boundaries' }));
-  assert.ok(screen.getByRole('button', { name: 'Play Connect boundaries demo' }));
+  assert.ok(screen.getByRole('button', { name: 'Pause Connect boundaries animation' }));
   assert.ok(screen.getByRole('table', { name: 'Connect boundaries settings' }));
 });
 

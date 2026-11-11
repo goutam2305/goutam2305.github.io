@@ -40,13 +40,15 @@ export function App() {
       <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
       <Header page={route.page} theme={theme} toggleTheme={toggleTheme} />
       <main className="site-main" id="main-content" ref={main} tabIndex={-1}>
+        <div className="page-view" key={route.page}>
         {route.page === 'tools' && <ToolsPage filter={filter} setFilter={setFilter} />}
         {route.page === 'project' && <ProjectPage project={route.project} />}
         {route.page === 'about' && <AboutPage />}
         {route.page === 'documentation' && <DocumentationPage section={route.section} />}
         {route.page === 'not-found' && <NotFoundPage />}
+        </div>
       </main>
-      <footer className="site-footer"><small>© 2026 GOUTAM Lab</small><button className="icon-button back-to-top" onClick={backToTop} aria-label="Back to top" title="Back to top"><ArrowUp size={20} aria-hidden="true" /></button></footer>
+      <footer className="site-footer"><div className="footer-inner"><div className="footer-identity"><span className="footer-wordmark">GOUTAM Lab</span><small>© {new Date().getFullYear()} · Independent 3D tools.</small></div><button className="back-to-top" onClick={backToTop} aria-label="Back to top" title="Back to top"><span>Back to top</span><ArrowUp size={20} aria-hidden="true" /></button></div></footer>
     </div>
   );
 }

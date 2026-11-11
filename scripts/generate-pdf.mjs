@@ -21,7 +21,7 @@ try {
     margin: { top: '17mm', bottom: '20mm', left: '16mm', right: '16mm' },
     displayHeaderFooter: true,
     headerTemplate: '<div></div>',
-    footerTemplate: '<div style="font:9px sans-serif;width:100%;text-align:center;color:#666">GOUTAM Lab · E-Z Topology — <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
+    footerTemplate: '<div style="font:9px monospace;width:100%;text-align:center;color:#666">GOUTAM Lab · E-Z Topology — <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
   });
   if (pdf.subarray(0, 5).toString() !== '%PDF-') throw new Error('Invalid PDF output');
   console.log(JSON.stringify({ file: 'public/docs/E-Z-Topology-Guide.pdf', bytes: pdf.length }));
