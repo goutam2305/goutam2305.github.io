@@ -29,7 +29,7 @@ test('every chapter has a real GIF and poster with accurate dimensions', async (
 });
 
 test('the attached guide includes each tool, settings and shortcut reference', async () => {
-  const guide = await readFile('public/docs/E-Z-Topology-Guide.md', 'utf8');
+  const guide = (await readFile('public/docs/E-Z-Topology-Guide.md', 'utf8')).replaceAll('\r\n', '\n');
   for (const tool of toolGuide) assert.ok(guide.includes(`## ${tool.name}\n`), tool.id);
   assert.ok(guide.includes('## Shared settings'));
   assert.ok(guide.includes('## Shortcut reference'));
