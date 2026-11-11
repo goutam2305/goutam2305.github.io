@@ -27,13 +27,16 @@ The deployable static website is **dist/client**, not the entire development fol
 
 ## GitHub Pages setup
 
-1. Create the public repository **goutam2305/goutam2305.github.io** for the website only.
-2. Push this website project to its main branch.
-3. In repository **Settings → Pages → Build and deployment**, select **GitHub Actions**.
-4. Run **Publish GOUTAM Lab** under Actions, or push a change to main.
-5. The Actions deployment will report the public site URL.
+The website repository is **goutam2305/goutam2305.github.io**. The first version is backed up on **feat/goutam-lab-portfolio**. Pages is configured to use GitHub Actions. Live publication is held for the first normal-browser visual review.
 
-Do not upload an unrelated workspace or a tool's development repository. This project intentionally contains no tool code or installers. Repository creation and publication are separate from the local preview; check the handoff for their actual status.
+After that review:
+
+1. Publish the reviewed website commit on main and make main the default branch.
+2. Run **Publish GOUTAM Lab** under Actions, or push a change to main.
+3. The workflow builds, tests and deploys only **dist/client**. Its deployment result reports the live URL.
+4. Check the deployed site in a normal browser. Future main-branch pushes update it automatically.
+
+Do not upload an unrelated workspace or a tool's development repository. This project intentionally contains no tool code or installers. Repository setup and live publication are separate; a Pages configuration alone does not mean the site is already live.
 
 ## Editing projects
 
