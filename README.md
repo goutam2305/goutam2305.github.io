@@ -2,6 +2,8 @@
 
 An independent portfolio for practical 3D tools. The first project is **E-Z Topology**, a free retopology tool being built for **3ds Max**. Maya support is planned.
 
+Website: https://goutam2305.github.io/ · Documentation: https://goutam2305.github.io/#/docs/ez-topology
+
 ## Local preview
 
 Node.js 24 or newer is recommended. No administrator installation is required if Node is already available.
@@ -30,11 +32,11 @@ Browser checks use an isolated standard Chrome through Playwright against localh
 
 ## GitHub Pages setup
 
-The website repository is **goutam2305/goutam2305.github.io**. The first version is backed up on **feat/goutam-lab-portfolio**. Pages is configured to use GitHub Actions. Live publication is held for the first normal-browser visual review.
+The website repository is **goutam2305/goutam2305.github.io**. The live site publishes from **main** through GitHub Actions; **feat/goutam-lab-portfolio** retains the development history. The Pages environment allows the exact main branch.
 
-After that review:
+For future updates:
 
-1. Publish the reviewed website commit on main and make main the default branch.
+1. Validate the website change locally, then publish the reviewed commit on main.
 2. Run **Publish GOUTAM Lab** under Actions, or push a change to main.
 3. The workflow builds, tests and deploys only **dist/client**. Its deployment result reports the live URL.
 4. Check the deployed site in a normal browser. Future main-branch pushes update it automatically.
