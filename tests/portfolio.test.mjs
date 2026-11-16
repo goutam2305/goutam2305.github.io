@@ -4,17 +4,18 @@ import { projects, filterProjects, getDownloadUrl, parseRoute, getInitialTheme }
 
 test('E-Z Topology is first; Maya is planned, not a current platform', () => {
   assert.equal(projects[0].name, 'E-Z Topology');
-  assert.equal(projects.length, 1);
+  assert.equal(projects.length, 3);
   assert.equal(projects[0].documentationUrl, '#/docs/ez-topology');
   assert.deepEqual(projects[0].platforms, ['3ds Max']);
   assert.deepEqual(projects[0].plannedPlatforms, ['Maya']);
   assert.equal(new Set(projects.map((p) => p.id)).size, projects.length);
 });
 
-test('available means an actual HTTPS release, not a beta status badge', () => {
-  assert.deepEqual(filterProjects(projects, 'available'), []);
+test('available means a real approved download, including beta releases', () => {
+  assert.deepEqual(filterProjects(projects, 'available'), projects);
+  assert.deepEqual(filterProjects([{ ...projects[0], downloadUrl: null }], 'available'), []);
   const released = { ...projects[0], downloadUrl: 'https://example.com/releases/tool.zip' };
-  assert.deepEqual(filterProjects([released, ...projects], 'available'), [released]);
+  assert.deepEqual(filterProjects([released, ...projects], 'available'), [released, ...projects]);
   for (const downloadUrl of ['javascript:alert(1)', '/missing.zip', 'http://example.com/tool.zip', 'not a url']) {
     assert.equal(getDownloadUrl({ downloadUrl }), null);
   }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+ <title id="title">E-Z Reference illustration</title><desc id="desc">Two calibrated image planes with a dimension guide, illustrated on warm graph paper.</desc>
+ <rect width="1200" height="800" fill="#ede6cf"/>
+ <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#bfb9a2" stroke-width="1"/></pattern></defs>
+ <rect width="1200" height="800" fill="url(#grid)" opacity=".6"/>
+ <g stroke="#354b49" stroke-width="5" stroke-linejoin="miter"><path d="M170 170H700V600H170Z" fill="#fbf5e4"/><path d="M735 245H1030V600H735Z" fill="#dce1c9"/></g>
+ <g fill="none" stroke="#7b8d77" stroke-width="8"><path d="M255 410V340H600V410M275 410V520M580 410V520M255 410H600M330 340V270H525V340"/><path d="M790 415H965V350H890V285H840V415M810 415V520M945 415V520"/></g>
+ <g stroke="#ad4455" stroke-width="4"><path d="M170 650H700M170 630V670M700 630V670M120 170V600M100 170H140M100 600H140"/></g>
+ <g fill="#ad4455"><rect x="160" y="160" width="20" height="20"/><rect x="690" y="160" width="20" height="20"/><rect x="160" y="590" width="20" height="20"/><rect x="690" y="590" width="20" height="20"/></g>
+ <g font-family="monospace" fill="#354b49"><text x="180" y="125" font-size="26" letter-spacing="6">FRONT</text><text x="745" y="205" font-size="26" letter-spacing="6">SIDE</text><text x="325" y="700" font-size="28" letter-spacing="3">TRUE PROPORTIONS</text></g>
+</svg>

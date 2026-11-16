@@ -1,0 +1,20 @@
+{
+  "ez-topology": {
+    "version": "0.15.0-beta.1",
+    "fileName": "E-Z-Topology-0.15.0-beta.1.mzp",
+    "bytes": 230586,
+    "sha256": "ceded6a5926448873327b18cce84c77815382dba4b083ecf718e32751a3c4f35"
+  },
+  "ez-reference": {
+    "version": "0.1.0-beta.1",
+    "fileName": "E-Z-Reference-0.1.0-beta.1.mzp",
+    "bytes": 43031,
+    "sha256": "3539c8b28ba8e663f722c636045a80adb65cbfe583088ed3d4e46add86146bf4"
+  },
+  "ez-stitchnseam": {
+    "version": "0.1.0-beta.1",
+    "fileName": "E-Z-StitchNSeam-0.1.0-beta.1.mzp",
+    "bytes": 758879,
+    "sha256": "764c4e890b2485c6d63abe75cb9f2231b7c0e373aae9fcd1d6e7f976743553f7"
+  }
+}

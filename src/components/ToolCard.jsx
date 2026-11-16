@@ -1,8 +1,10 @@
 import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
+import { Paperclip } from '@phosphor-icons/react/dist/csr/Paperclip';
 
 export function ToolCard({ project, index }) {
   return (
-    <article className="tool-card">
+    <article className="tool-card" data-project-id={project.id} data-project-status={project.status} data-project-name={project.name} style={{ '--card-delay': `${Math.min(index ?? 0, 5) * 60}ms` }}>
+      <span className="project-sheet-clip" aria-hidden="true"><Paperclip size={30} weight="bold" /></span>
       <a href={`#/tools/${project.id}`} className="tool-card-link" aria-labelledby={`title-${project.id}`}>
         <div className="tool-art">
           <img src={project.image} alt={project.imageAlt} width="1200" height="800" loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} />

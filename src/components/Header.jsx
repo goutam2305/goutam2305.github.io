@@ -1,9 +1,6 @@
-import { Moon } from '@phosphor-icons/react/dist/csr/Moon';
-import { Sun } from '@phosphor-icons/react/dist/csr/Sun';
 import { useEffect, useRef, useState } from 'react';
 
-export function Header({ page, theme, toggleTheme }) {
-  const label = `Switch to ${theme === 'light' ? 'dark' : 'light'} theme`;
+export function Header({ page }) {
   const header = useRef(null);
   const progress = useRef(null);
   const [cursorPaused, setCursorPaused] = useState(() => {
@@ -52,9 +49,6 @@ export function Header({ page, theme, toggleTheme }) {
           <a href="#/" aria-current={['tools', 'project', 'documentation'].includes(page) ? 'page' : undefined}>Tools</a>
           <a href="#/about" aria-current={page === 'about' ? 'page' : undefined}>About</a>
         </nav>
-        <button className="icon-button theme-toggle" onClick={toggleTheme} aria-label={label} title={label} aria-pressed={theme === 'dark'}>
-          {theme === 'light' ? <Moon size={23} weight="regular" /> : <Sun size={24} weight="regular" />}
-        </button>
       </div>
       </div>
       {page === 'documentation' && <div className="reading-progress" ref={progress} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}><span /></div>}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+ <title id="title">E-Z StitchNSeam illustration</title><desc id="desc">Curved stitch patterns on two upholstered panels. An illustration, not a recorded tool demonstration.</desc>
+ <rect width="1200" height="800" fill="#dce1cf"/>
+ <path d="M110 170H730V630H110Z" fill="#85947f" stroke="#354b49" stroke-width="6"/>
+ <path d="M750 250H1090V630H750Z" fill="#a8b39a" stroke="#354b49" stroke-width="6"/>
+ <path d="M155 215H685V585H155Z" fill="none" stroke="#c4ccb3" stroke-width="26"/>
+ <path d="M160 220H680V580H160Z" fill="none" stroke="#fff2d4" stroke-width="7" stroke-dasharray="18 15"/>
+ <path d="M210 270H625V525H210Z" fill="none" stroke="#efe0bd" stroke-width="5" stroke-dasharray="17 14"/>
+ <g stroke="#fff2d4" stroke-width="7" stroke-linecap="round"><path d="M795 310l30 30m-30 0 30-30M795 370l30 30m-30 0 30-30M795 430l30 30m-30 0 30-30M795 490l30 30m-30 0 30-30M795 550l30 30m-30 0 30-30"/></g>
+ <path d="M875 305V575" fill="none" stroke="#354b49" stroke-width="3" stroke-dasharray="7 10"/>
+ <path d="M915 305l-18 24 36 24-36 24 36 24-36 24 36 24-36 24 36 24-36 24 18 24" fill="none" stroke="#fff2d4" stroke-width="7" stroke-linecap="round"/>
+ <text x="120" y="115" font-family="monospace" fill="#354b49" font-size="28" letter-spacing="6">DRAW THE PATH. SHAPE THE THREAD.</text>
+ <g fill="#ad4455"><rect x="100" y="160" width="20" height="20"/><rect x="720" y="160" width="20" height="20"/></g>
+</svg>

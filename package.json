@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-demo-manifest.mjs && node scripts/generate-guide.mjs && vite build && node scripts/prepare-sites-build.mjs",
+    "build": "node scripts/generate-demo-manifest.mjs && node scripts/generate-guide.mjs && node scripts/generate-library-guides.mjs && node scripts/generate-terms.mjs && vite build && node scripts/prepare-sites-build.mjs",
     "preview": "vite preview",
+    "preview:browser": "node scripts/open-preview.mjs",
     "test:sites": "node --test tests/sites-worker.test.mjs",
-    "test": "node --test tests/portfolio.test.mjs tests/guide.test.mjs",
+    "test": "node --test tests/portfolio.test.mjs tests/guide.test.mjs tests/library.test.mjs tests/workshop-lighting.test.mjs tests/workshop-life.test.mjs tests/workshop-hardware.test.mjs",
     "test:browser": "playwright test",
     "test:ui": "node --import tsx --test tests/ui.test.jsx"
   },

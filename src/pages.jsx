@@ -3,26 +3,23 @@ import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
 import { DownloadSimple } from '@phosphor-icons/react/dist/csr/DownloadSimple';
 import { SlidersHorizontal } from '@phosphor-icons/react/dist/csr/SlidersHorizontal';
 import { BookOpen } from '@phosphor-icons/react/dist/csr/BookOpen';
-import { FilterMenu } from './components/FilterMenu';
 import { ToolCard } from './components/ToolCard';
 import { ToolGuide } from './components/ToolGuide';
+import { LibraryGuide } from './components/LibraryGuide';
+import { DownloadButton } from './components/DownloadButton';
 import { filterProjects, getDownloadUrl, projects } from './projects';
 
 export function ToolsPage({ filter, setFilter }) {
   const visible = filterProjects(projects, filter);
   return (
     <>
-      <div className="gallery-heading">
-        <div className="gallery-title"><h1 id="tools-heading" tabIndex={-1}>Tools</h1><span className="project-count" role="status" aria-live="polite">{visible.length} {visible.length === 1 ? 'project' : 'projects'}</span></div>
-        <FilterMenu value={filter} onChange={setFilter} />
-      </div>
       {visible.length ? (
         <div className="project-grid">{visible.map((project, index) => <ToolCard key={project.id} project={project} index={index} />)}</div>
       ) : (
         <div className="empty-state">
           <SlidersHorizontal size={30} weight="light" aria-hidden="true" />
           <h2>{filter === 'available' ? 'Getting ready to share.' : 'No tools in this view.'}</h2>
-          <p>{filter === 'available' ? 'Public downloads are being prepared. In the meantime, explore E-Z Topology and its documentation.' : 'E-Z Topology is currently in beta. Show all tools to see its preview.'}</p>
+          <p>{filter === 'available' ? 'Public downloads are being prepared. Explore the tool previews and documentation while the builds are tested.' : 'The current tools are in beta. Show all tools to explore their previews.'}</p>
           <button className="text-button" onClick={() => { setFilter('all'); document.getElementById('tools-heading')?.focus(); }}>Show all tools <ArrowUpRight size={20} aria-hidden="true" /></button>
         </div>
       )}
@@ -45,7 +42,7 @@ export function ProjectPage({ project }) {
           </div>
           <div className="release-note">
             <a className="documentation-button" href={project.documentationUrl}><BookOpen size={20} aria-hidden="true" /> Read documentation</a>
-            {download ? <a className="primary-button" href={download}><DownloadSimple size={20} aria-hidden="true" /> Download free</a> : (
+            {download ? <DownloadButton key={project.id} project={project} /> : (
               <><span className="release-state"><DownloadSimple size={20} aria-hidden="true" /> {project.status === 'beta' ? 'Public download coming soon' : 'In development'}</span>
                 <p>{project.status === 'beta' ? 'The first public build will be listed here when it is ready.' : 'Explore the preview. A public build is not available yet.'}</p></>
             )}
@@ -60,7 +57,7 @@ export function ProjectPage({ project }) {
         {project.features.map(([title, text]) => <div key={title}><h2>{title}</h2><p>{text}</p></div>)}
       </section>
       <section className="support-note"><h2>Platform support</h2><p>{project.support}</p></section>
-      <ToolGuide />
+      {project.id === 'ez-topology' ? <ToolGuide /> : <LibraryGuide key={project.id} project={project} />}
     </div>
   );
 }
@@ -73,7 +70,7 @@ export function AboutPage() {
       <p className="about-lead">GOUTAM Lab is an independent home for practical 3D tools, experiments and the ideas behind them.</p>
       <p>The focus right now is <a href="#/tools/ez-topology">E-Z Topology</a>: a free retopology tool being built for 3ds Max. The aim is to make rebuilding a mesh feel clear, flexible and part of the artist’s everyday workflow.</p>
       <p>Further ahead, I want to explore real-time rendering for DCC applications. For now, the work starts with better meshes.</p>
-      <div className="about-bottom"><span>Independent work. Shared for free.</span><a href="https://github.com/goutam2305" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={18} aria-hidden="true" /></a></div>
+      <div className="about-bottom"><span>Independent work. Shared for free.</span></div>
     </article>
   );
 }

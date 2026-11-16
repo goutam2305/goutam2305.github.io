@@ -1,0 +1,273 @@
+/* Flat raster scenery with separate lamp, cord and object-aware 2D lighting. */
+:root { --canopy-height: 164px; --reading-top: calc(var(--header-height) + var(--canopy-height)); }
+html { scroll-padding-top: var(--reading-top); scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; }
+.workshop-scene { --scene-play: running; --rail-width: 42px; position: relative; isolation: isolate; overflow-x: clip; flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--paper); transition: background-color 220ms ease; }
+.workshop-scene[data-motion='paused'] { --scene-play: paused; }
+.workshop-scene .site-main { position: relative; z-index: 2; padding-top: 254px; padding-bottom: 58px; }
+.workshop-scene[data-page='tools'] .site-main { padding-top: 58px; }
+.workshop-scene .gallery-heading { min-height: 166px; margin-bottom: 34px; padding: 0 280px 0 0; border: 0; align-items: flex-start; }
+.workshop-scene .gallery-title { padding-top: 6px; padding-left: 14px; }
+.workshop-scene .gallery-title h1 { font-size: 32px; }
+.workshop-wall { position: absolute; inset: 0; z-index: -1; background-image: var(--wall-art); background-size: 780px 780px; opacity: .32; pointer-events: none; }
+.workshop-light-field { position: fixed; z-index: 22; inset: 0; pointer-events: none; background: radial-gradient(ellipse 470px 650px at var(--beam-view-x, 80%) var(--beam-view-y, 330px), #efb7681c 0%, #e8ae6516 15%, #e1ab600e 38%, #d8a05a06 63%, #d8a05a01 82%, transparent 100%), radial-gradient(ellipse 200px 175px at var(--bulb-view-x, 80%) var(--bulb-view-y, 120px), #ffd18a26, #edb3640c 40%, transparent 100%); opacity: 0; transition: opacity 220ms ease; }
+.workshop-scene[data-lit='true'] .workshop-light-field { opacity: 1; }
+[data-light-surface] { filter: drop-shadow(var(--shadow-x, 0px) var(--shadow-y, 0px) 3px rgb(4 6 5 / var(--shadow-alpha, 0))); }
+[data-shadow-local] { filter: none; }
+[data-shadow-local]::before { content: ''; position: absolute; inset: 0; background: inherit; pointer-events: none; transform: translate(var(--shadow-x, 0px), var(--shadow-y, 0px)); filter: brightness(0) blur(2px); opacity: var(--shadow-alpha, 0); mask-image: radial-gradient(ellipse 320px 500px at var(--surface-x, -9999px) var(--surface-y, -9999px), #000 0%, #0009 28%, #0003 56%, transparent 100%); }
+.scene-lit { position: absolute; inset: 0; background: inherit; pointer-events: none; opacity: calc(var(--light-level, 0) * .95); filter: brightness(2.7) sepia(.3) saturate(.8); mask-image: radial-gradient(ellipse 440px 620px at var(--surface-x, -9999px) var(--surface-y, -9999px), #000 0%, #000c 22%, #0005 52%, #0001 80%, transparent 100%); }
+.workshop-scene[data-lit='false'] .scene-lit { opacity: 0; }
+.workshop-rail { position: absolute; top: 0; bottom: 32px; width: var(--rail-width); z-index: 3; background-image: var(--rail-art); background-repeat: repeat-y; background-size: 184px 552px; background-position: center top; pointer-events: none; image-rendering: pixelated; }
+.rail-left { left: 0; }
+.rail-right { right: 0; transform: scaleX(-1); background-position: center -185px; }
+.workshop-ivy-sprig { position: absolute; display: block; left: 0; width: var(--rail-width); height: 82px; background-image: var(--sprig-art); background-position: center top; background-size: 54px 81px; background-repeat: no-repeat; transform-origin: 50% 0; animation: ivy-breeze 7s ease-in-out var(--leaf-delay) infinite; animation-play-state: var(--scene-play); }
+.workshop-hardware { position: absolute; inset: 0 0 auto; height: 220px; pointer-events: none; z-index: 1; }
+.workshop-hardware > span { position: absolute; display: block; background-image: var(--hardware-art); background-repeat: no-repeat; image-rendering: pixelated; }
+.hardware-pipe { left: 34%; top: 8px; width: 232px; height: 62px; background-size: 591px 197px; background-position: -19px -55px; }
+.hardware-tools { left: 53%; top: 62px; width: 72px; height: 94px; background-size: 620px 207px; background-position: -283px -61px; }
+.hardware-gauge { left: 65%; top: 48px; width: 62px; height: 80px; background-size: 695px 232px; background-position: -427px -63px; }
+.hardware-bracket { right: 14px; top: 22px; width: 190px; height: 129px; background-size: 804px 268px; background-position: -584px -66px; }
+.workshop-rope { position: absolute; z-index: 4; top: 174px; left: 18px; right: 18px; height: 48px; touch-action: none; cursor: grab; transform: scaleY(var(--rope-stretch, 1)); transform-origin: 50% 0; }
+.workshop-rope:active { cursor: grabbing; }
+.workshop-rope-art { position: relative; display: block; height: 100%; width: 100%; background-image: var(--rope-art); background-repeat: no-repeat; background-size: 100% 320px; background-position: center -140px; image-rendering: pixelated; animation: rope-breeze 7s ease-in-out infinite; animation-play-state: var(--scene-play); transform-origin: 50% 0; pointer-events: none; }
+.workshop-lamp-anchor { position: absolute; top: 36px; right: 124px; width: 112px; height: 184px; z-index: 8; }
+.workshop-lamp-mount { position: relative; width: 112px; height: 184px; }
+.workshop-lamp-physics { display: block; position: absolute; inset: 0; transform-origin: 49.4% 0; transform: translateY(var(--lamp-drop, 0px)) rotate(var(--lamp-angle, 0deg)); pointer-events: none; }
+.workshop-lamp-swing { display: block; position: absolute; inset: 0; transform-origin: 49.4% 0; animation: lamp-breeze 7s ease-in-out infinite; animation-play-state: var(--scene-play); }
+.workshop-lamp { position: absolute; z-index: 2; top: 0; left: 0; width: 112px; height: 112px; padding: 0; border: 0; background: transparent; border-radius: 4px; touch-action: none; cursor: grab; }
+.workshop-lamp:active { cursor: grabbing; }
+.workshop-lamp-mount[data-grabbed] .workshop-lamp-swing { animation-play-state: paused; }
+.workshop-suspension { position: absolute; top: calc(0px - var(--lamp-drop, 0px)); left: calc(49.4% - 1.5px); width: 3px; height: calc(46px + var(--lamp-drop, 0px)); background-image: var(--cord-art); background-repeat: repeat-y; background-size: 78px 234px; background-position: center top; filter: brightness(.52); image-rendering: pixelated; }
+.workshop-shade { display: block; position: absolute; left: 6px; top: 34px; width: 100px; height: 76px; pointer-events: none; }
+.workshop-shade > img { position: absolute; width: 153px; height: 102px; max-width: none; left: -26px; top: -14px; image-rendering: pixelated; }
+.workshop-shade[data-lit='true'] > img { filter: drop-shadow(0 1px 3px #e8b65c66); }
+.workshop-bulb-anchor { position: absolute; left: 50%; top: 85%; width: 1px; height: 1px; }
+.cord-hit-area { z-index: 3; }
+.workshop-cord { position: absolute; top: 112px; left: 68px; width: 44px; height: calc(44px + var(--cord-pull, 0px)); border: 0; padding: 0; background: transparent; pointer-events: auto; touch-action: none; cursor: ns-resize; }
+.workshop-pull-strand { position: absolute; left: 20.5px; top: -21px; width: 3px; height: calc(39px + var(--cord-pull, 0px)); background-image: var(--cord-art); background-repeat: repeat-y; background-size: 78px 234px; background-position: center top; pointer-events: none; image-rendering: pixelated; }
+.workshop-pull-knob { position: absolute; left: 15px; top: calc(11px + var(--cord-pull, 0px)); width: 14px; height: 24px; background-image: var(--knob-art); background-repeat: no-repeat; background-size: 21px 31.5px; background-position: -3.5px -5px; pointer-events: none; image-rendering: pixelated; }
+.workshop-lamp:focus-visible:not([data-pointer-focus]), .workshop-cord:focus-visible:not([data-pointer-focus]) { outline: 2px dashed var(--accent); outline-offset: 3px; }
+.workshop-lamp[data-pointer-focus], .workshop-cord[data-pointer-focus] { outline: none; }
+.workshop-fireflies { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: clip; opacity: .45; transition: opacity 600ms ease; }
+.workshop-scene[data-lit='true'] .workshop-fireflies { opacity: 1; }
+.workshop-firefly { position: absolute; top: 0; left: 0; width: 24px; height: 19px; will-change: transform; }
+.workshop-firefly img { width: 24px; height: 19px; image-rendering: pixelated; animation: firefly-wings .14s steps(2) var(--wing-delay) infinite; animation-play-state: var(--scene-play); }
+.firefly-glimmer { position: absolute; left: 14px; top: 11px; width: 3px; height: 3px; background: #e4ed85; box-shadow: 0 0 4px 2px #cbdc6e8c, 0 0 9px 3px #cbdc6e33; opacity: var(--fly-glow, .5); }
+.workshop-mechanic { position: absolute; z-index: 6; left: 0; top: 0; width: 64px; height: 96px; pointer-events: none; will-change: transform; }
+.mechanic-sprite { display: block; width: 64px; height: 96px; background-size: 400% 200%; background-position: var(--sprite-x, 0%) var(--sprite-y, 0%); image-rendering: pixelated; transform: scaleX(var(--facing, 1)); transform-origin: center 90%; filter: drop-shadow(2px 3px 0 #14251a3d); }
+.workshop-mechanic:is([data-action='rest'], [data-action='think']) .mechanic-sprite { animation: mechanic-breathe 2.8s steps(2) infinite; animation-play-state: var(--scene-play); }
+.mechanic-drop-rope { position: absolute; z-index: 5; width: 3px; display: none; background: var(--cord-art) center top / 78px 234px repeat-y; image-rendering: pixelated; pointer-events: none; filter: sepia(.4); }
+.mechanic-bubble { position: absolute; display: block; bottom: var(--bubble-bottom, 91px); left: var(--bubble-shift, -48px); width: max-content; max-width: 170px; padding: 8px 10px; border: 2px solid #4a5341; border-radius: 3px; background: #fff3d9; color: #273f33; font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; box-shadow: 2px 3px 0 #12271a24; animation: bubble-arrive 180ms steps(3) both; }
+.mechanic-bubble::after { content: ''; position: absolute; left: 50%; bottom: -8px; width: 8px; height: 8px; background: #fff3d9; border-right: 2px solid #4a5341; border-bottom: 2px solid #4a5341; transform: skewY(35deg); }
+.mechanic-bubble.thought { border-style: dashed; border-radius: 15px; }
+.mechanic-bubble.thought::after { width: 5px; height: 5px; border: 1px solid #4a5341; border-radius: 50%; bottom: -11px; transform: none; box-shadow: 5px 6px 0 -1px #fff3d9; }
+.mechanic-sparks { display: none; position: absolute; left: calc(32px + var(--facing, 1) * 22px); top: 61px; width: 6px; height: 6px; transform: scaleX(var(--facing, 1)); }
+.workshop-mechanic[data-action='weld'] .mechanic-sparks { display: block; }
+.workshop-mechanic[data-looking='true'] .mechanic-sparks { display: none; }
+.mechanic-sparks::before { content: ''; position: absolute; inset: 0; background: #fff5c3; box-shadow: 0 0 10px 4px #edb75c77; animation: welding-arc .23s steps(2) infinite; animation-play-state: var(--scene-play); }
+.mechanic-sparks i { position: absolute; width: 2px; height: 2px; background: #e9bb70; animation: welding-spark .7s steps(5) infinite; animation-play-state: var(--scene-play); --spark-x: -14px; --spark-y: -10px; }
+.mechanic-sparks i:nth-child(2) { animation-delay: -.2s; --spark-x: -20px; --spark-y: 9px; }
+.mechanic-sparks i:nth-child(3) { animation-delay: -.4s; --spark-x: 12px; --spark-y: 16px; }
+.mechanic-sparks i:nth-child(4) { animation-delay: -.55s; --spark-x: -8px; --spark-y: 22px; }
+.workshop-pavement { position: relative; z-index: 4; flex: 0 0 78px; height: 78px; width: 100%; background-image: var(--pavement-art); background-repeat: repeat-x; background-size: 1200px 400px; background-position: -137px calc(100% + 15px); pointer-events: none; image-rendering: pixelated; }
+.lamp-filter-control { position: absolute; top: -25px; left: 32px; z-index: 12; }
+.lamp-filter-trigger { border-color: transparent !important; background: transparent !important; color: #7d7654; }
+.lamp-filter-trigger svg { transition: transform 180ms ease, color 180ms ease; }
+.lamp-filter-trigger:hover svg, .lamp-filter-trigger[aria-expanded='true'] svg { color: var(--accent); transform: rotate(30deg); }
+.lamp-filter-control .filter-menu { width: 230px; right: 0; border: 3px double var(--edge); box-shadow: 3px 3px 0 var(--header-rule); }
+.lamp-filter-control .filter-menu-title { font-family: var(--display); font-size: 17px; text-transform: none; letter-spacing: 0; }
+.workshop-scene[data-motion='paused'] .workshop-rope { pointer-events: none; touch-action: pan-y; cursor: default; }
+.workshop-scene[data-motion='paused'] .workshop-lamp { cursor: pointer; }
+.workshop-scene[data-motion='paused'] .workshop-cord { cursor: pointer; touch-action: manipulation; }
+:root[data-theme='dark'] .workshop-wall { opacity: .14; }
+:root[data-theme='dark'] .workshop-pavement { filter: brightness(.62) saturate(.7); }
+:root[data-theme='dark'] .workshop-rail { filter: brightness(.64) saturate(.76); }
+:root[data-theme='dark'] .workshop-hardware { filter: brightness(.72) saturate(.72); }
+:root[data-theme='dark'] .workshop-rope-art { filter: brightness(.64); }
+:root[data-theme='dark'] .tool-card { filter: drop-shadow(var(--shadow-x, 0px) var(--shadow-y, 0px) 3px rgb(0 0 0 / var(--shadow-alpha, 0))); }
+.workshop-scene .tool-card { position: relative; }
+.workshop-scene[data-lit='true'] .tool-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: var(--light-level, 0); background: radial-gradient(ellipse 440px 620px at var(--surface-x) var(--surface-y), #f4c58124, #e9bc760a 45%, transparent 100%); }
+@keyframes lamp-breeze { 0%, 100% { transform: rotate(-2deg); } 45% { transform: rotate(2.5deg); } 70% { transform: rotate(.5deg); } }
+@keyframes rope-breeze { 0%, 100% { transform: scaleY(.98); } 45% { transform: scaleY(1.025); } }
+@keyframes ivy-breeze { 0%, 100% { transform: rotate(-2deg); } 45% { transform: rotate(3deg); } 70% { transform: rotate(.5deg); } }
+@keyframes firefly-wings { from { transform: scaleY(.9); } to { transform: scaleY(1); } }
+@keyframes mechanic-breathe { 0%, 100% { translate: 0 0; } 50% { translate: 0 -1px; } }
+@keyframes bubble-arrive { from { opacity: 0; translate: 0 3px; } to { opacity: 1; translate: 0 0; } }
+@keyframes welding-arc { 0%, 65% { opacity: 1; } 35%, 100% { opacity: .15; } }
+@keyframes welding-spark { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: var(--spark-x) var(--spark-y); } }
+@media (min-width: 1600px) {
+  .workshop-scene .site-main, .header-inner, .footer-inner { width: calc(100% - 112px); max-width: 1640px; }
+  .workshop-scene .gallery-heading { padding-right: 300px; }
+}
+@media (max-width: 1099px) {
+  .hardware-pipe { left: 35%; width: 210px; background-size: 565px 188px; background-position: -18px -53px; }
+  .hardware-tools { left: 57%; }
+  .hardware-gauge { display: none !important; }
+  .workshop-scene .gallery-heading { padding-right: 230px; }
+}
+@media (max-width: 719px) {
+  .workshop-scene { --rail-width: 22px; }
+  .workshop-rail { background-size: 96px 288px; }
+  .workshop-ivy-sprig { height: 46px; background-size: 30px 45px; }
+  .workshop-scene .site-main { width: calc(100% - 58px); padding-top: 214px; padding-bottom: 34px; }
+  .workshop-scene[data-page='tools'] .site-main { padding-top: 38px; }
+  .workshop-scene .gallery-heading { min-height: 150px; padding: 0 130px 0 0; margin-bottom: 24px; }
+  .workshop-scene .gallery-title { flex-wrap: wrap; gap: 10px; padding-left: 10px; }
+  .workshop-scene .gallery-title h1 { font-size: 27px; }
+  .workshop-scene .project-count { padding-left: 10px; font-size: 12px; }
+  .workshop-scene .gallery-title .project-count { border-left: 0; padding-left: 0; width: 100%; }
+  .workshop-rope { top: 138px; left: 8px; right: 8px; }
+  .hardware-pipe, .hardware-tools, .hardware-gauge { display: none !important; }
+  .hardware-bracket { top: 18px; right: 6px; width: 114px; height: 78px; background-size: 482px 161px; background-position: -350px -40px; }
+  .workshop-lamp-anchor { top: 38px; right: 46px; width: 78px; height: 129px; }
+  .workshop-lamp-mount { transform: scale(.7); transform-origin: 0 0; }
+  .workshop-cord { left: 58px; top: 102px; width: 64px; height: calc(64px + var(--cord-pull, 0px)); }
+  .workshop-pull-strand { left: 30.5px; top: -11px; }
+  .workshop-pull-knob { left: 25px; top: calc(21px + var(--cord-pull, 0px)); }
+  .lamp-filter-control { left: 16px; top: -21px; }
+  .lamp-filter-control .filter-menu { width: 228px; right: -20px; }
+  .workshop-pavement { flex-basis: 64px; height: 64px; background-size: 1000px 333.333px; background-position: -263px calc(100% + 12px); }
+  .mechanic-bubble { max-width: 136px; font-size: 10px; }
+}
+@media (max-width: 380px) {
+  .workshop-scene .site-main { width: calc(100% - 48px); }
+  .workshop-scene .gallery-heading { padding-right: 110px; }
+  .workshop-scene .gallery-title { gap: 8px; }
+  .lamp-filter-control .filter-menu { right: -16px; width: 222px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workshop-scene *, .workshop-scene *::before, .workshop-scene *::after { animation: none !important; transition: none !important; }
+  .workshop-lamp-swing { transform: none; }
+}
+@media print {
+  .workshop-scene { display: block; background: white; }
+  .workshop-wall, .workshop-light-field, .workshop-rail, .workshop-hardware, .workshop-lamp-anchor, .workshop-rope, .workshop-pavement, .workshop-fireflies, .workshop-mechanic, .mechanic-drop-rope { display: none !important; }
+  .workshop-scene .site-main { width: 100%; padding: 0; }
+}
+
+/* Persistent workshop, with ordinary document scrolling beneath it. */
+.workshop-top { position: sticky; top: 0; z-index: 20; flex: 0 0 var(--reading-top); background: var(--paper); }
+.workshop-top .site-header, .workshop-top .site-header.is-scrolled { position: static; background: transparent; border: 0; box-shadow: none; }
+.workshop-canopy { position: relative; height: var(--canopy-height); background: transparent; }
+.workshop-rail { z-index: 21; }
+.workshop-canopy .gallery-heading { position: absolute; left: max(60px, calc((100% - 1640px) / 2)); top: 23px; min-height: 0; margin: 0; padding: 0; display: block; z-index: 9; }
+.workshop-canopy .gallery-title { padding: 0; }
+.workshop-canopy .gallery-title h1 { font-size: 30px; }
+.workshop-canopy .workshop-lamp-anchor { top: 0; }
+.workshop-canopy .workshop-rope { top: 120px; }
+.workshop-canopy .hardware-pipe { top: -15px; }
+.workshop-canopy .hardware-tools { top: 20px; }
+.workshop-canopy .hardware-gauge { top: 6px; }
+.workshop-canopy .hardware-bracket { top: -12px; }
+.workshop-scene .site-main, .workshop-scene[data-page='tools'] .site-main { padding-top: 42px; }
+.workshop-scene:not([data-page='tools']) .workshop-wall { display: none; }
+.workshop-scene:not([data-page='tools']) .site-main { background: var(--paper); }
+.guide-demo, .doc-toc { top: calc(var(--reading-top) + 24px); }
+.doc-toc { max-height: calc(100svh - var(--reading-top) - 48px); }
+.scene-lit { opacity: calc(var(--light-level, 0) * .7); filter: brightness(1.22) sepia(.55) saturate(1.35); }
+.project-selector { display: inline-block; margin-top: 15px; z-index: 12; }
+.project-selector::before { content: ''; position: absolute; width: 3px; height: 15px; left: 17px; top: -12px; background: var(--cord-art) center top / 78px 234px repeat-y; }
+.project-tag { display: flex; align-items: center; gap: 9px; height: 44px; padding: 0 13px; border: 1px solid #9d896b; border-radius: 0 8px 0 0; color: #3e4b35; background: #e7d8ba; box-shadow: 2px 2px 0 #1c30251c; font-size: 12px; touch-action: none; transform: translateY(var(--tag-pull, 0px)); transition: transform 140ms ease, background-color 140ms ease; }
+.project-tag:hover, .project-tag[aria-expanded='true'] { background: #f0e3c6; }
+.project-tag.is-filtered { border-color: var(--accent); }
+.project-selector .filter-menu { left: 0; right: auto; top: calc(100% + 8px); width: 230px; padding: 9px; border: 1px solid var(--edge); box-shadow: 3px 4px 0 #0e221c33; }
+.project-selector .filter-menu button { border-bottom: 1px dashed var(--rule); }
+.project-selector .filter-menu button:last-child { border: 0; }
+.project-selector .filter-menu-title { font-family: var(--display); font-size: 17px; text-transform: none; }
+.workshop-fireflies { position: fixed; inset: 0; z-index: 24; }
+.workshop-actors { position: fixed; inset: 0; pointer-events: none; z-index: 25; }
+.mechanic-sprite { background-image: var(--mechanic-art); }
+.workshop-mechanic, .mechanic-drop-rope { z-index: 1; }
+.mechanic-bubble { z-index: 2; position: absolute; left: 0; top: 0; bottom: auto; opacity: 1; pointer-events: none; }
+.mechanic-bubble::after { left: var(--bubble-tail, 50%); }
+.mechanic-bubble[data-placement='left']::after { left: auto; right: -7px; top: 50%; bottom: auto; transform: rotate(-35deg); }
+.mechanic-bubble[data-placement='right']::after { left: -7px; top: 50%; bottom: auto; transform: rotate(130deg); }
+.mechanic-bubble[data-placement='below']::after { top: -7px; bottom: auto; transform: rotate(210deg); }
+.workshop-scene .tool-card { border: 0; border-radius: 0; background: transparent; overflow: visible; box-shadow: none; }
+.workshop-scene .tool-card::before { content: ''; position: absolute; inset: 8px -5px -6px 6px; background: #d6c9aa; opacity: .6; clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 6px) 0, calc(100% - 6px) 5px, 100% 5px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 0 100%); }
+.workshop-scene .tool-card-link { position: relative; background: var(--card); padding: 12px 12px 0; border: 0; clip-path: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 12px) 0, calc(100% - 12px) 5px, calc(100% - 6px) 5px, calc(100% - 6px) 11px, 100% 11px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 0 100%); }
+.workshop-scene .tool-card:has(a:focus-visible) .tool-card-link { box-shadow: inset 0 0 0 3px var(--accent); }
+.workshop-scene .tool-copy { padding: 25px 10px 22px; }
+.workshop-scene .tool-art { border: 0; }
+.workshop-scene .status-badge { top: 12px; right: 10px; border: 1px dashed currentColor; transform: rotate(-2deg); background: var(--card); }
+.project-sheet-clip { position: absolute; left: 24px; top: -13px; z-index: 3; color: #8a907f; filter: drop-shadow(1px 2px 0 #12271a40); transform: rotate(-13deg); pointer-events: none; }
+.workshop-scene .tool-card:has(a:is(:hover,:focus-visible)) { box-shadow: none; transform: translateY(-3px); }
+.workshop-mechanic[data-action='hammer'] .mechanic-sprite { animation: mechanic-tap .7s steps(2) infinite; animation-play-state: var(--scene-play); }
+.workshop-rope-art::before { opacity: calc(var(--shadow-alpha, 0) * .5); filter: brightness(0) blur(3px); transform: translate(calc(var(--shadow-x, 0px) * .35), calc(var(--shadow-y, 0px) * .35)); }
+@keyframes mechanic-tap { from { translate: 0 0; } to { translate: 0 1px; } }
+@media (max-width: 719px) {
+  :root { --canopy-height: 126px; }
+  .workshop-canopy .gallery-heading { left: 34px; top: 13px; }
+  .workshop-canopy .gallery-title h1 { font-size: 25px; }
+  .workshop-canopy .gallery-title { gap: 5px; }
+  .workshop-canopy .project-count { font-size: 11px; }
+  .workshop-canopy .project-selector { margin-top: 10px; }
+  .project-tag { height: 36px; padding: 0 8px; gap: 6px; font-size: 10px; min-height: 44px; }
+  .workshop-canopy .workshop-lamp-anchor { top: -7px; right: 36px; }
+  .workshop-canopy .workshop-rope { top: 84px; }
+  .workshop-canopy .hardware-bracket { top: -17px; }
+  .workshop-scene .site-main, .workshop-scene[data-page='tools'] .site-main { padding-top: 29px; }
+  .project-selector .filter-menu { width: 220px; }
+  .workshop-scene .tool-card-link { padding: 10px 10px 0; }
+  .workshop-scene .tool-copy { padding: 22px 8px 20px; }
+  .mechanic-bubble { max-width: 136px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workshop-scene .tool-card:has(a:is(:hover,:focus-visible)) { transform: none; }
+}
+@media print {
+  .workshop-top, .workshop-actors { display: none !important; }
+  .workshop-scene .site-main { padding: 0 !important; }
+}
+
+/* Small independent workshop mechanisms. */
+.workshop-hardware > .hardware-pipe { background: none; }
+.workshop-canopy .hardware-pipe { left: 60px; top: -26px; width: 190px; height: 52px; }
+.hardware-pipe-art { position: absolute; inset: 0; background: var(--hardware-art) -16px -45px / 485px 162px no-repeat; image-rendering: pixelated; }
+.hardware-pipe[data-steaming='true'] .hardware-pipe-art { animation: pipe-shudder .25s steps(2) 3; animation-play-state: var(--scene-play); }
+.pipe-steam { position: absolute; left: 159px; top: 5px; width: 58px; height: 58px; background-size: 200% 200%; background-repeat: no-repeat; image-rendering: pixelated; pointer-events: none; animation: steam-puff 2.2s linear both; animation-play-state: var(--scene-play); }
+.workshop-canopy .hardware-tools { display: block; position: absolute; left: 46%; top: 24px; width: 112px; height: 104px; }
+/* Clean stationary board: the old atlas crop also contained hanging loops. */
+.wrench-rack { position: absolute; width: 112px; height: 36px; left: 0; top: 0; border: 2px solid #293d2d; background: linear-gradient(#8b795a55, #8b795a55) 12px 8px / 19px 2px no-repeat, linear-gradient(#8b795a55, #8b795a55) 76px 23px / 13px 2px no-repeat, linear-gradient(#d4c39666, #d4c39666) 46px 5px / 21px 2px no-repeat, #b5a47b; box-shadow: inset 0 2px 0 #d1bf94, inset 0 -2px 0 #8f805c; clip-path: polygon(2px 0, calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px), 0 2px, 2px 2px); }
+.workshop-wrench { position: absolute; z-index: 1; left: 8px; top: 4px; width: 44px; height: 88px; border: 0; padding: 0; background: transparent; pointer-events: auto; touch-action: none; cursor: grab; transform-origin: 50% 15px; transform: rotate(var(--wrench-angle, 0deg)); }
+.workshop-wrench.wrench-short { left: 60px; height: 75px; }
+.wrench-pin { position: absolute; z-index: 2; left: 27px; top: 16px; width: 6px; height: 6px; border: 1px solid #293d2d; background: #9b9d73; box-shadow: inset 0 1px 0 #cccca0; pointer-events: none; }
+.wrench-pin-short { left: 79px; }
+.workshop-wrench:active { cursor: grabbing; }
+.workshop-wrench:focus-visible { outline: 2px dashed var(--accent); outline-offset: 3px; }
+.workshop-wrench[data-pointer-focus]:focus-visible { outline: none; }
+.wrench-sprite { position: absolute; left: 0; top: 0; width: 44px; height: 88px; background: var(--wrench-art) -22px 0 / 176px 88px no-repeat; image-rendering: pixelated; transform-origin: 50% 15px; animation: wrench-breeze 6.7s ease-in-out infinite; animation-play-state: var(--scene-play); }
+.wrench-short .wrench-sprite { background-position: -110px 0; animation-delay: -2.3s; animation-duration: 7.8s; }
+.workshop-wrench[data-grabbed] .wrench-sprite { animation-play-state: paused; }
+.hardware-clock { position: absolute; left: 68%; top: -19px; width: 72px; height: 132px; }
+.clock-face { position: absolute; z-index: 2; inset: 0 auto auto 0; width: 72px; height: 72px; background: var(--clock-art) left top / 200% 100% no-repeat; image-rendering: pixelated; }
+.clock-pendulum { position: absolute; left: 0; top: 55px; width: 72px; height: 72px; background: var(--clock-art) right top / 200% 100% no-repeat; image-rendering: pixelated; transform-origin: 50% 7px; animation: clock-pendulum 2s ease-in-out infinite; animation-play-state: var(--scene-play); }
+.clock-hand { position: absolute; z-index: 3; display: block; width: 2px; background: #32493a; left: 35px; transform-origin: 50% 100%; }
+.clock-hour { top: 27px; height: 12px; width: 3px; left: 34.5px; }
+.clock-minute { top: 19px; height: 20px; }
+.clock-second { top: 18px; height: 21px; width: 1px; left: 35.5px; background: #9e3e48; }
+.clock-pin { position: absolute; z-index: 4; left: 34px; top: 37px; width: 4px; height: 4px; background: #334b38; }
+@keyframes wrench-breeze { 0%, 100% { rotate: -1.1deg; } 53% { rotate: 1.5deg; } }
+@keyframes clock-pendulum { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+@keyframes pipe-shudder { 0%, 100% { translate: 0 0; } 50% { translate: 0 1px; } }
+@keyframes steam-puff {
+  0% { opacity: 0; background-position: 0 0; transform: translate(0, 3px); }
+  12% { opacity: .5; }
+  24.9% { background-position: 0 0; }
+  25%, 49.9% { background-position: 100% 0; }
+  50%, 74.9% { background-position: 0 100%; }
+  75% { background-position: 100% 100%; opacity: .35; }
+  100% { background-position: 100% 100%; opacity: 0; transform: translate(10px, -32px); }
+}
+@media (min-width: 1600px) { .workshop-canopy .hardware-pipe { left: max(56px, calc((100% - 1640px) / 2)); } }
+@media (min-width: 720px) and (max-width: 1099px) {
+  .workshop-canopy .hardware-pipe { left: 32px; }
+  .workshop-canopy .hardware-tools { left: calc(100% - 330px); }
+  .hardware-clock { left: 43%; transform: scale(.85); transform-origin: 50% 0; }
+}
+@media (max-width: 719px) {
+  .workshop-canopy .hardware-pipe, .workshop-canopy .hardware-tools, .hardware-clock { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workshop-hardware *, .workshop-hardware *::before, .workshop-hardware *::after { animation: none !important; transition: none !important; }
+}
