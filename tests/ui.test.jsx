@@ -71,20 +71,20 @@ test('a focused mechanic request remains intact while the document is hidden', a
   container.querySelector('.tool-card').getBoundingClientRect = () => ({ left: 40, right: 440, top: 300, bottom: 900, width: 400, height: 600 });
   await act(async () => { container.querySelector('.tool-card-link').focus(); });
   const actor = container.querySelector('.workshop-mechanic');
-  assert.equal(actor.dataset.project, 'ez-topology');
+  assert.equal(actor.dataset.project, 'easyviewer');
   try {
     await act(async () => {
       Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
       document.dispatchEvent(new window.Event('visibilitychange'));
     });
-    assert.equal(actor.dataset.project, 'ez-topology');
+    assert.equal(actor.dataset.project, 'easyviewer');
   } finally {
     await act(async () => {
       Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
       document.dispatchEvent(new window.Event('visibilitychange'));
     });
   }
-  assert.equal(actor.dataset.project, 'ez-topology');
+  assert.equal(actor.dataset.project, 'easyviewer');
 });
 
 afterEach(() => {
@@ -95,12 +95,12 @@ afterEach(() => {
   media.matches = false;
 });
 
-test('gallery has the three approved tools, Tools/About navigation and a quiet footer', () => {
+test('gallery has the four tools, Tools/About me navigation and a quiet footer', () => {
   render(<App />);
   const navigation = screen.getByRole('navigation', { name: 'Main navigation' });
-  assert.deepEqual(within(navigation).getAllByRole('link').map((link) => link.textContent), ['Tools', 'About']);
-  assert.equal(screen.getAllByRole('article').length, 3);
-  assert.equal(screen.getAllByRole('img').length, 3);
+  assert.deepEqual(within(navigation).getAllByRole('link').map((link) => link.textContent), ['Tools', 'About me']);
+  assert.equal(screen.getAllByRole('article').length, 4);
+  assert.equal(screen.getAllByRole('img').length, 4);
   assert.equal(screen.queryByText('Segmentation'), null);
   assert.equal(screen.queryByText('Generate Mesh'), null);
   assert.equal(screen.getByRole('heading', { name: 'E-Z Topology' }).tagName, 'H2');
@@ -139,15 +139,15 @@ test('selection filters results, indicates active filtering and restores trigger
   assert.equal(screen.queryByRole('menu'), null);
 });
 
-test('Available shows the three approved releases and the filter can return to All tools', async () => {
+test('Available shows the available tools and the filter can return to All tools', async () => {
   render(<App />);
   const input = user();
   await input.click(screen.getByRole('button', { name: 'Filter tools: All tools' }));
   await input.click(screen.getByRole('menuitemradio', { name: 'Available' }));
-  assert.equal(screen.queryAllByRole('article').length, 3);
+  assert.equal(screen.queryAllByRole('article').length, 4);
   await input.click(screen.getByRole('button', { name: 'Filter tools: Available' }));
   await input.click(screen.getByRole('menuitemradio', { name: 'All tools' }));
-  assert.equal(screen.getAllByRole('article').length, 3);
+  assert.equal(screen.getAllByRole('article').length, 4);
   assert.equal(document.activeElement, screen.getByRole('button', { name: 'Filter tools: All tools' }));
 });
 
@@ -242,9 +242,9 @@ test('tool and About navigation show the real download without repository links'
   await waitFor(() => assert.ok(screen.getByRole('heading', { level: 1, name: 'E-Z Topology' })));
   assert.ok(screen.getByRole('link', { name: 'Download .mzp' }).getAttribute('href').endsWith('.mzp'));
   assert.equal(document.title, 'E-Z Topology — GOUTAM Lab');
-  await input.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'About' }));
-  await waitFor(() => assert.ok(screen.getByRole('heading', { level: 1, name: /Useful tools\.\s*Made for 3D artists\./ })));
-  assert.equal(document.title, 'About — GOUTAM Lab');
+  await input.click(within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole('link', { name: 'About me' }));
+  await waitFor(() => assert.ok(screen.getByRole('heading', { level: 1, name: /About\s*me/ })));
+  assert.equal(document.title, 'About me — GOUTAM Lab');
   assert.equal(screen.queryByRole('link', { name: 'GitHub' }), null);
 });
 
@@ -282,4 +282,20 @@ test('documentation is linked from the product and includes downloadable guides'
   assert.ok(screen.getByRole('link', { name: 'Download guide' }).getAttribute('download') !== null);
   assert.ok(screen.getByRole('link', { name: 'PDF' }).href.endsWith('.pdf'));
   assert.equal(screen.getAllByRole('figure').length, 10);
+});
+
+test('EasyViewer page gallery steps through screenshots with buttons and thumbnails', async () => {
+  window.history.replaceState(null, '', '/#/tools/easyviewer');
+  render(<App />);
+  const input = user();
+  const gallery = () => screen.getByRole('region', { name: 'See it in action.' });
+  assert.ok(within(gallery()).getByRole('heading', { name: 'EasyViewer 3.0' }));
+  await input.click(screen.getByRole('button', { name: 'Next screenshot' }));
+  assert.ok(within(gallery()).getByRole('heading', { name: 'Focus on a detail' }));
+  await input.click(screen.getByRole('button', { name: 'Previous screenshot' }));
+  await input.click(screen.getByRole('button', { name: 'Previous screenshot' }));
+  assert.ok(within(gallery()).getByRole('heading', { name: 'Item inspection' }));
+  await input.click(screen.getByRole('button', { name: /Screenshot 3: Turntable mode/ }));
+  assert.ok(within(gallery()).getByRole('heading', { name: 'Turntable mode' }));
+  assert.equal(screen.getByText('3 / 4').textContent, '3 / 4');
 });

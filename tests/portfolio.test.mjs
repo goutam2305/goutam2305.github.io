@@ -3,18 +3,20 @@ import assert from 'node:assert/strict';
 import { projects, filterProjects, getDownloadUrl, parseRoute, getInitialTheme } from '../src/projects.js';
 
 test('E-Z Topology is first; Maya is planned, not a current platform', () => {
-  assert.equal(projects[0].name, 'E-Z Topology');
-  assert.equal(projects.length, 3);
-  assert.equal(projects[0].documentationUrl, '#/docs/ez-topology');
-  assert.deepEqual(projects[0].platforms, ['3ds Max']);
-  assert.deepEqual(projects[0].plannedPlatforms, ['Maya']);
+  assert.equal(projects[0].name, 'EasyViewer');
+  assert.deepEqual(projects.map((p) => p.tier), ['paid', 'free', 'free', 'free']);
+  assert.equal(projects.length, 4);
+  const topology = projects.find((p) => p.id === 'ez-topology');
+  assert.equal(topology.documentationUrl, '#/docs/ez-topology');
+  assert.deepEqual(topology.platforms, ['3ds Max']);
+  assert.deepEqual(topology.plannedPlatforms, ['Maya']);
   assert.equal(new Set(projects.map((p) => p.id)).size, projects.length);
 });
 
 test('available means a real approved download, including beta releases', () => {
   assert.deepEqual(filterProjects(projects, 'available'), projects);
-  assert.deepEqual(filterProjects([{ ...projects[0], downloadUrl: null }], 'available'), []);
-  const released = { ...projects[0], downloadUrl: 'https://example.com/releases/tool.zip' };
+  assert.deepEqual(filterProjects([{ ...projects[1], downloadUrl: null }], 'available'), []);
+  const released = { ...projects[1], downloadUrl: 'https://example.com/releases/tool.zip' };
   assert.deepEqual(filterProjects([released, ...projects], 'available'), [released, ...projects]);
   for (const downloadUrl of ['javascript:alert(1)', '/missing.zip', 'http://example.com/tool.zip', 'not a url']) {
     assert.equal(getDownloadUrl({ downloadUrl }), null);

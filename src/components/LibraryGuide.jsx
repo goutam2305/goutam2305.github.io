@@ -35,7 +35,7 @@ export function LibraryGuide({ project }) {
       </div>
       <div className="guide-panel" role="tabpanel" id={`library-panel-${section.id}`} aria-labelledby={`library-tab-${section.id}`} tabIndex={0}>
         <div className="guide-demo"><h3>{section.name}</h3><p>{section.summary}</p><a className="back-link" href={`${project.documentationUrl}?section=${section.id}`}>Read this chapter <ArrowRight size={18} aria-hidden="true" /></a>
-          {guide.comingSoon.length > 0 && <p className="tool-notes">Coming soon: {guide.comingSoon.join(' and ').toLowerCase()}. These features are not available in the stitch beta.</p>}
+          {guide.comingSoon.length > 0 && <p className="tool-notes">Coming soon: {guide.comingSoon.join(' and ').toLowerCase()}. These features are not available in this beta.</p>}
         </div><ToolInstructions tool={section} />
       </div>
     </section>
@@ -48,9 +48,9 @@ export function LibraryDocumentationPage({ project, section }) {
   return (
     <article className="documentation-page">
       <a className="back-link doc-back" href={`#/tools/${project.id}`}><ArrowLeft size={18} aria-hidden="true" /> {project.name}</a>
-      <div className="doc-intro"><p className="eyebrow">User guide · 3ds Max 2026</p><h1>{project.name}<br />documentation</h1><p>{guide.introduction}</p>
+      <div className="doc-intro"><p className="eyebrow">User guide · {guide.platform ?? '3ds Max 2026'}</p><h1>{project.name}<br />documentation</h1><p>{guide.introduction}</p>
         <div className="doc-downloads"><a href={localAsset(guide.document)} download><DownloadSimple size={18} aria-hidden="true" /> Download guide</a><button onClick={() => window.print()}><Printer size={18} aria-hidden="true" /> Print</button></div>
-        <small>Download the free MZP from the <a href={`#/tools/${project.id}`}>tool page</a>. Accept the software terms, then drag the file into Max to install.</small>
+        <small>{guide.installNote ?? <>Download the free MZP from the <a href={`#/tools/${project.id}`}>tool page</a>. Accept the software terms, then drag the file into Max to install.</>}</small>
       </div>
       <div className="doc-layout"><nav className="doc-toc" aria-label="Documentation chapters"><p>On this page</p>{guide.sections.map((item) => <a key={item.id} href={chapterUrl(item.id)} aria-current={section === item.id ? 'location' : undefined}
         onClick={(event) => { if (window.location.hash === chapterUrl(item.id)) { event.preventDefault(); scrollToChapter(item.id); } }}>{item.name}</a>)}</nav>

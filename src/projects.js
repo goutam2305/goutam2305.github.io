@@ -3,9 +3,40 @@ const asset = (name) => `${import.meta.env?.BASE_URL ?? './'}assets/${name}`;
 
 export const projects = [
   {
+    id: 'easyviewer',
+    name: 'EasyViewer',
+    status: 'available',
+    tier: 'paid',
+    badge: 'Fab · Paid',
+    description: 'Orbit viewer, clickable hotspots and in-game item inspection for Unreal Engine. Blueprint only.',
+    image: asset('easyviewer.jpg'),
+    imageAlt: 'A low-poly character on a lit pedestal with hotspot rings on the head and chest.',
+    platforms: ['Unreal Engine 5.1 – 5.9'],
+    plannedPlatforms: [],
+    downloadUrl: null,
+    storeUrl: 'https://www.fab.com/search?q=EasyViewer',
+    storeLabel: 'Get it on Fab',
+    gallery: [
+      { src: asset('easyviewer/00_overview.jpg'), title: 'EasyViewer 3.0', text: 'Orbit viewer, hotspots, item inspection and turntable. Blueprint only, UE 5.1 – 5.9, mouse, touch and gamepad.', alt: 'EasyViewer screenshot: easyviewer 3.0.' },
+      { src: asset('easyviewer/03_hotspot_chest.jpg'), title: 'Focus on a detail', text: 'Click a hotspot and the camera flies to it, then orbit, pan and zoom stay around that spot.', alt: 'EasyViewer screenshot: focus on a detail.' },
+      { src: asset('easyviewer/05_turntable.jpg'), title: 'Turntable mode', text: 'Drag on the object to spin it, drag anywhere else to orbit the camera. Works with touch.', alt: 'EasyViewer screenshot: turntable mode.' },
+      { src: asset('easyviewer/07_inspect_item.jpg'), title: 'Item inspection', text: 'Pick up an item from gameplay, turn it in your hands and put it back exactly where it was.', alt: 'EasyViewer screenshot: item inspection.' },
+    ],
+    documentationUrl: '#/docs/easyviewer',
+    introduction: 'Turn any object into an interactive showcase. Drop one Blueprint into your level, pick the object and press Play: the camera frames it and your players orbit, pan and zoom with mouse, touch or gamepad.',
+    features: [
+      ['Orbit viewer', 'Orbit, pan and zoom with smoothing, inertia and automatic framing. The camera never goes below the ground.'],
+      ['Hotspots', 'Rings grow and show their name on hover. Click one and the camera flies to that detail and stays around it.'],
+      ['Item inspection', 'Call Inspect Item from gameplay: the item flies into the player’s hands, turns freely and goes back exactly where it was.'],
+      ['Turntable mode', 'Drag on the object to spin it, drag anywhere else to orbit the camera. Works with touch on mobile.'],
+    ],
+    support: 'Blueprint only, no code modules. Tested on Unreal Engine 5.1, 5.6, 5.8 and 5.9 on Windows and on Android. Builds for Windows, macOS, Linux, Android and iOS. Available on Fab.',
+  },
+  {
     id: 'ez-topology',
     name: 'E-Z Topology',
     status: 'beta',
+    tier: 'free',
     badge: 'Free beta',
     description: 'Retopology tools for 3ds Max. Draw, extend and refine clean quad meshes.',
     image: asset('ez-topology.webp'),
@@ -26,6 +57,7 @@ export const projects = [
     id: 'ez-stitchnseam',
     name: 'E-Z StitchNSeam',
     status: 'beta',
+    tier: 'free',
     badge: 'Free beta',
     description: 'Editable 3D stitches along your splines. One stitch set, one selectable object.',
     image: asset('ez-stitchnseam.svg'),
@@ -46,6 +78,7 @@ export const projects = [
     id: 'ez-reference',
     name: 'E-Z Reference',
     status: 'beta',
+    tier: 'free',
     badge: 'Free beta',
     description: 'Drop an image, set its real size and create a reference plane in your scene.',
     image: asset('ez-reference.svg'),
@@ -67,6 +100,11 @@ export const projects = [
   return { ...project, release, downloadUrl: release ? `${import.meta.env?.BASE_URL ?? './'}downloads/${release.fileName}` : null };
 });
 
+export const tiers = [
+  { id: 'paid', eyebrow: 'Paid · on Fab', title: 'Projects', note: 'Complete, supported projects. Bought and downloaded through Fab.' },
+  { id: 'free', eyebrow: 'Free · download here', title: 'Free tools', note: 'Small tools shared for free. Download them right here.' },
+];
+
 export const filters = [
   { id: 'all', label: 'All tools' },
   { id: 'available', label: 'Available' },
@@ -84,8 +122,17 @@ export function getDownloadUrl(project) {
   }
 }
 
+export function getStoreUrl(project) {
+  try {
+    const url = new URL(project.storeUrl ?? '');
+    return url.protocol === 'https:' && url.hostname === 'www.fab.com' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 export function filterProjects(items, filter) {
-  if (filter === 'available') return items.filter((project) => getDownloadUrl(project));
+  if (filter === 'available') return items.filter((project) => getDownloadUrl(project) || getStoreUrl(project));
   if (filter === 'development') return items.filter((project) => project.status === 'development');
   return items;
 }
@@ -96,7 +143,7 @@ export function parseRoute(hash = '') {
   if (hash === '#/terms') return { page: 'terms' };
   const documentation = /^#\/docs\/ez-topology(?:\?section=([a-z-]+))?$/.exec(hash);
   if (documentation) return { page: 'documentation', section: documentation[1] ?? null };
-  const productDocumentation = /^#\/docs\/(ez-stitchnseam|ez-reference)(?:\?section=([a-z-]+))?$/.exec(hash);
+  const productDocumentation = /^#\/docs\/(ez-stitchnseam|ez-reference|easyviewer)(?:\?section=([a-z-]+))?$/.exec(hash);
   if (productDocumentation) return {
     page: 'product-documentation',
     project: projects.find((item) => item.id === productDocumentation[1]),

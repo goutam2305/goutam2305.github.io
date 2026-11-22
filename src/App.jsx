@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp } from '@phosphor-icons/react/dist/csr/ArrowUp';
 import { AboutPage, NotFoundPage, ProjectPage, ToolsPage } from './pages';
-import { parseRoute } from './projects';
+import { parseRoute, projects, getStoreUrl } from './projects';
+import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
 import { useTheme } from './useTheme';
 import { DocumentationPage } from './DocumentationPage';
 import { LibraryDocumentationPage } from './components/LibraryGuide';
@@ -23,7 +24,7 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
   useEffect(() => {
-    const label = route.page === 'project' ? route.project.name : route.page === 'product-documentation' ? `${route.project.name} documentation` : route.page === 'documentation' ? 'E-Z Topology documentation' : route.page === 'about' ? 'About' : route.page === 'terms' ? 'Software terms' : route.page === 'not-found' ? 'Page not found' : 'Tools';
+    const label = route.page === 'project' ? route.project.name : route.page === 'product-documentation' ? `${route.project.name} documentation` : route.page === 'documentation' ? 'E-Z Topology documentation' : route.page === 'about' ? 'About me' : route.page === 'terms' ? 'Software terms' : route.page === 'not-found' ? 'Page not found' : 'Tools';
     document.title = `${label} — GOUTAM Lab`;
     if (firstRender.current) { firstRender.current = false; if (!(['documentation', 'product-documentation'].includes(route.page) && route.section)) return; }
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -38,6 +39,7 @@ export function App() {
       return () => { active = false; window.cancelAnimationFrame(frame); };
     }
   }, [hash]);
+  const fabUrl = getStoreUrl(projects.find((item) => item.id === 'easyviewer'));
   const backToTop = () => {
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'instant' : 'smooth' });
@@ -59,7 +61,18 @@ export function App() {
         </div>
       </main>
       </WorkshopScene>
-      <footer className="site-footer"><div className="footer-inner"><div className="footer-identity"><span className="footer-wordmark">GOUTAM Lab</span><small>© {new Date().getFullYear()} · Independent 3D tools.</small><a className="footer-terms" href="#/terms">Software terms</a></div><button className="back-to-top" onClick={backToTop} aria-label="Back to top" title="Back to top"><span>Back to top</span><ArrowUp size={20} aria-hidden="true" /></button></div></footer>
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-identity">
+            <span className="footer-wordmark">GOUTAM Lab<span className="brand-cursor" aria-hidden="true">_</span></span>
+            <p>Independent tools for 3D artists and Unreal Engine developers.</p>
+          </div>
+          <nav className="footer-col" aria-label="Footer: explore"><h2>Explore</h2><a href="#/">Tools</a><a href="#/tools/easyviewer">EasyViewer</a><a href="#/about">About me</a></nav>
+          <nav className="footer-col" aria-label="Footer: help"><h2>Help</h2><a href="#/docs/easyviewer">EasyViewer guide</a><a href="#/docs/ez-topology">E-Z Topology guide</a><a className="footer-terms" href="#/terms">Software terms</a></nav>
+          <div className="footer-col"><h2>Get EasyViewer</h2><p>Orbit viewer, hotspots and item inspection for Unreal Engine.</p><a className="footer-cta" href={fabUrl} target="_blank" rel="noopener noreferrer">On Fab <ArrowUpRight size={16} aria-hidden="true" /></a></div>
+        </div>
+        <div className="footer-bar"><div className="footer-bar-inner"><small>© {new Date().getFullYear()} GOUTAM Lab · Made one tool at a time.</small><button className="back-to-top" onClick={backToTop} aria-label="Back to top" title="Back to top"><span>Back to top</span><ArrowUp size={20} aria-hidden="true" /></button></div></div>
+      </footer>
     </div>
   );
 }

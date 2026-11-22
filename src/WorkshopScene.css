@@ -149,7 +149,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; }
 .workshop-top { position: sticky; top: 0; z-index: 20; flex: 0 0 var(--reading-top); background: var(--paper); }
 .workshop-top .site-header, .workshop-top .site-header.is-scrolled { position: static; background: transparent; border: 0; box-shadow: none; }
 .workshop-canopy { position: relative; height: var(--canopy-height); background: transparent; }
-.workshop-rail { z-index: 21; }
+.workshop-rail { z-index: 21; bottom: 10px; }
+.workshop-pavement { z-index: 22; }
 .workshop-canopy .gallery-heading { position: absolute; left: max(60px, calc((100% - 1640px) / 2)); top: 23px; min-height: 0; margin: 0; padding: 0; display: block; z-index: 9; }
 .workshop-canopy .gallery-title { padding: 0; }
 .workshop-canopy .gallery-title h1 { font-size: 30px; }

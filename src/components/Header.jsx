@@ -47,7 +47,7 @@ export function Header({ page }) {
       <div className="header-actions">
         <nav aria-label="Main navigation">
           <a href="#/" aria-current={['tools', 'project', 'documentation'].includes(page) ? 'page' : undefined}>Tools</a>
-          <a href="#/about" aria-current={page === 'about' ? 'page' : undefined}>About</a>
+          <a href="#/about" aria-current={page === 'about' ? 'page' : undefined}>About me</a>
         </nav>
       </div>
       </div>
