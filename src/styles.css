@@ -397,12 +397,10 @@ img { display: block; max-width: 100%; }
 .tier-heading h2 { font-family: var(--display); font-size: clamp(28px, 2.6vw, 38px); font-weight: 700; margin: 0; line-height: 1.1; }
 .tier-count { display: inline-block; vertical-align: middle; font: 600 14px/1 'IBM Plex Mono', monospace; color: var(--muted); border: 1px solid var(--rule); padding: 5px 8px; margin-left: 8px; }
 .tier-note { color: var(--muted); font-size: 14px; max-width: 360px; margin: 0; text-align: right; line-height: 1.6; }
-.tier-section[data-tier='paid'] .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .tool-art .status-badge.available { background: var(--accent); color: var(--paper); border-color: var(--accent); }
 @media (max-width: 760px) {
   .tier-heading { flex-direction: column; align-items: flex-start; }
   .tier-note { text-align: left; }
-  .tier-section[data-tier='paid'] .project-grid { grid-template-columns: 1fr; }
 }
 
 /* ---- About me ---- */
@@ -453,16 +451,6 @@ img { display: block; max-width: 100%; }
 @media (max-width: 860px) { .site-footer .footer-inner { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .site-footer .footer-inner { grid-template-columns: 1fr; } .footer-bar-inner { flex-direction: column; align-items: flex-start; } }
 
-/* Paid projects: wide featured card, image left and copy right */
-.tier-section[data-tier='paid'] .project-grid { grid-template-columns: 1fr; }
-.tier-section[data-tier='paid'] .tool-card-link { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); height: 100%; }
-.tier-section[data-tier='paid'] .tool-art { height: 100%; }
-.tier-section[data-tier='paid'] .tool-art img { height: 100%; object-fit: cover; }
-.tier-section[data-tier='paid'] .tool-copy { padding: clamp(28px, 3vw, 48px); justify-content: center; }
-.tier-section[data-tier='paid'] .tool-copy h2 { font-size: clamp(30px, 3vw, 44px); }
-.tier-section[data-tier='paid'] .tool-description { font-size: 16px; line-height: 1.75; }
-@media (max-width: 900px) { .tier-section[data-tier='paid'] .tool-card-link { grid-template-columns: 1fr; } }
-@media (min-width: 901px) { .tier-section[data-tier='paid'] .tool-art { border-bottom: 0; border-right: 1px solid var(--edge); } }
 
 /* ---- About me: hero with photo and journey card ---- */
 .about-page { max-width: 1320px; }
