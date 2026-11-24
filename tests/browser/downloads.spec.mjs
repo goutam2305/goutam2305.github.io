@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { projects } from '../../src/projects.js';
 
-test('each tool downloads its exact MZP after terms consent without email or a repository page', async ({ page }) => {
+test('each free tool on the site downloads its exact MZP after terms consent without email or a repository page', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  for (const id of ['ez-topology', 'ez-stitchnseam', 'ez-reference']) {
+  for (const { id } of projects.filter((project) => project.tier === 'free')) {
     await page.goto(`/#/tools/${id}`);
     await page.evaluate(() => localStorage.removeItem('goutam-lab-terms'));
     await page.getByRole('link', { name: 'Download .mzp', exact: true }).click();

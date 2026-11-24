@@ -1,7 +1,8 @@
 import releases from './releaseManifest.json' with { type: 'json' };
 const asset = (name) => `${import.meta.env?.BASE_URL ?? './'}assets/${name}`;
 
-export const projects = [
+// Set hidden: true to take a project off the site without deleting its entry or files.
+export const catalog = [
   {
     id: 'easyviewer',
     name: 'EasyViewer',
@@ -56,6 +57,7 @@ export const projects = [
   {
     id: 'ez-stitchnseam',
     name: 'E-Z StitchNSeam',
+    hidden: true,
     status: 'beta',
     tier: 'free',
     badge: 'Free beta',
@@ -77,6 +79,7 @@ export const projects = [
   {
     id: 'ez-reference',
     name: 'E-Z Reference',
+    hidden: true,
     status: 'beta',
     tier: 'free',
     badge: 'Free beta',
@@ -99,6 +102,8 @@ export const projects = [
   const release = releases[project.id];
   return { ...project, release, downloadUrl: release ? `${import.meta.env?.BASE_URL ?? './'}downloads/${release.fileName}` : null };
 });
+
+export const projects = catalog.filter((project) => !project.hidden);
 
 export const tiers = [
   { id: 'paid', eyebrow: 'Paid · on Fab', title: 'Projects', note: 'Complete, supported projects. Bought and downloaded through Fab.' },
@@ -143,12 +148,9 @@ export function parseRoute(hash = '') {
   if (hash === '#/terms') return { page: 'terms' };
   const documentation = /^#\/docs\/ez-topology(?:\?section=([a-z-]+))?$/.exec(hash);
   if (documentation) return { page: 'documentation', section: documentation[1] ?? null };
-  const productDocumentation = /^#\/docs\/(ez-stitchnseam|ez-reference|easyviewer)(?:\?section=([a-z-]+))?$/.exec(hash);
-  if (productDocumentation) return {
-    page: 'product-documentation',
-    project: projects.find((item) => item.id === productDocumentation[1]),
-    section: productDocumentation[2] ?? null,
-  };
+  const productDocumentation = /^#\/docs\/([a-z0-9-]+)(?:\?section=([a-z-]+))?$/.exec(hash);
+  const documented = productDocumentation && projects.find((item) => item.id === productDocumentation[1]);
+  if (documented) return { page: 'product-documentation', project: documented, section: productDocumentation[2] ?? null };
   const match = /^#\/tools\/([a-z0-9-]+)$/.exec(hash);
   const project = match && projects.find((item) => item.id === match[1]);
   return project ? { page: 'project', project } : { page: 'not-found' };

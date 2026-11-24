@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 
 const errors = new WeakMap();
+// The header and footer wordmarks both blink; they must always agree.
+const cursorAnimations = (page) => page.locator('.brand-cursor').evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName));
 
 test('navigation and lamp form one seamless workshop frame', async ({ page }) => {
   await page.goto('/');
@@ -121,7 +123,7 @@ test('a wrench nudge gets a directional glance before the mechanic resumes its p
   await page.goto('/');
   await page.locator('.tool-card-link').first().hover();
   const actor = page.locator('.workshop-mechanic');
-  await expect(actor).toHaveAttribute('data-project', 'ez-topology');
+  await expect(actor).toHaveAttribute('data-project', 'easyviewer');
   const wrench = page.getByRole('button', { name: 'Swing long wrench' });
   await wrench.focus();
   await page.keyboard.press('ArrowLeft');
@@ -129,10 +131,10 @@ test('a wrench nudge gets a directional glance before the mechanic resumes its p
   await expect(actor).toHaveAttribute('data-attention', 'wrench');
   await expect(actor).toHaveAttribute('data-look', /left|right|up|down/);
   expect(await page.locator('.mechanic-sprite').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('mechanic-gaze.png');
-  await expect(actor).toHaveAttribute('data-project', 'ez-topology');
+  await expect(actor).toHaveAttribute('data-project', 'easyviewer');
   await page.clock.runFor(2800);
   await expect(actor).not.toHaveAttribute('data-attention', 'wrench');
-  await expect(actor).toHaveAttribute('data-project', 'ez-topology');
+  await expect(actor).toHaveAttribute('data-project', 'easyviewer');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.workshop-scene')).toHaveAttribute('data-motion', 'paused');
   const paused = await actor.getAttribute('style');
@@ -191,7 +193,7 @@ test('height-only window changes keep the mechanic visible at its selected proje
   const box = await actor.boundingBox();
   expect(box.y + box.height).toBeLessThanOrEqual(520);
   await expect(actor).toHaveAttribute('data-work-zone', zone);
-  await expect(actor).toHaveAttribute('data-project', 'ez-topology');
+  await expect(actor).toHaveAttribute('data-project', 'easyviewer');
 });
 
 test('a wrench moved during a long descent is noticed after he reaches a safe working pause', async ({ page }) => {
@@ -212,7 +214,7 @@ test('a wrench moved during a long descent is noticed after he reaches a safe wo
   }
   await expect(actor).toHaveAttribute('data-attention', 'wrench');
   expect(await page.locator('.mechanic-sprite').evaluate(el => getComputedStyle(el).backgroundImage)).toContain('mechanic-gaze.png');
-  await expect(actor).toHaveAttribute('data-project', 'ez-topology');
+  await expect(actor).toHaveAttribute('data-project', 'easyviewer');
 });
 
 test('reduced-motion lighting remains attached to the sticky lamp when scrolling', async ({ page }) => {
@@ -310,19 +312,22 @@ test.afterEach(async ({ page }) => expect(errors.get(page)).toEqual([]));
 test('the approved tool library, light/dark themes and compact filter work', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('.tool-card')).toHaveCount(3);
+  await expect(page.locator('.tool-card')).toHaveCount(2);
+  await expect(page.getByRole('heading', { name: 'EasyViewer', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'E-Z Topology' })).toBeVisible();
+  await expect(page.getByText(/StitchNSeam|E-Z Reference/)).toHaveCount(0);
   await expect(page.getByText('Segmentation', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Generate Mesh', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('menu')).toHaveCount(0);
   expect(await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('IBM Plex Mono');
-  expect(await page.locator('.brand-cursor').evaluate((element) => getComputedStyle(element).animationName)).toBe('cursor-blink');
+  expect(await cursorAnimations(page)).toEqual(['cursor-blink', 'cursor-blink']);
   await page.getByRole('button', { name: 'Pause logo cursor' }).click();
-  expect(await page.locator('.brand-cursor').evaluate((element) => getComputedStyle(element).animationName)).toBe('none');
+  expect(await cursorAnimations(page)).toEqual(['none', 'none']);
   await page.reload();
   await expect(page.getByRole('button', { name: 'Resume logo cursor' })).toBeVisible();
+  expect(await cursorAnimations(page)).toEqual(['none', 'none']);
   await page.getByRole('button', { name: 'Resume logo cursor' }).click();
-  expect(await page.locator('.brand-cursor').evaluate((element) => getComputedStyle(element).animationName)).toBe('cursor-blink');
+  expect(await cursorAnimations(page)).toEqual(['cursor-blink', 'cursor-blink']);
   const surfaces = await page.evaluate(() => ['.site-header', 'html', '.site-footer'].map((selector) => getComputedStyle(document.querySelector(selector)).backgroundColor));
   expect(new Set(surfaces).size).toBe(3);
   await page.screenshot({ path: 'artifacts/gallery-light.png', fullPage: true, animations: 'disabled' });
@@ -423,7 +428,7 @@ test('reduced motion starts every documentation example paused', async ({ page }
   await page.goto('/#/docs/ez-topology');
   await page.getByRole('link', { name: 'Draw', exact: true }).click();
   for (const image of await page.locator('.demo-visual img').all()) await expect(image).toHaveAttribute('src', /\.webp$/);
-  expect(await page.locator('.brand-cursor').evaluate((element) => getComputedStyle(element).animationName)).toBe('none');
+  expect(await cursorAnimations(page)).toEqual(['none', 'none']);
   expect(await page.locator('.workshop-lamp-swing').evaluate((element) => getComputedStyle(element).animationName)).toBe('none');
   await expect(page.getByRole('button', { name: 'Pause scene animation' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Resume Draw animation' }).click();
@@ -463,7 +468,7 @@ test('cord owns theme switching and the scene stays alive without pause controls
   await expect(page.locator('.workshop-shade img')).toHaveAttribute('src', /lamp-body-on\.png$/);
   await expect(page.getByRole('button', { name: /scene animation/ })).toHaveCount(0);
   expect(await page.locator('.workshop-lamp-swing').evaluate(el => getComputedStyle(el).animationPlayState)).toBe('running');
-  expect(await page.locator('.brand-cursor').evaluate(el => getComputedStyle(el).animationName)).toBe('cursor-blink');
+  expect(await cursorAnimations(page)).toEqual(['cursor-blink', 'cursor-blink']);
 });
 
 test('surface light has no floating cone edge and fireflies move independently', async ({ page }) => {
@@ -488,7 +493,7 @@ test('mechanic visits a hovered project without blocking its link and cancels on
   await page.goto('/');
   await expect(page.locator('.workshop-mechanic')).toBeVisible();
   await page.locator('.tool-card').first().hover();
-  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'ez-topology');
+  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'easyviewer');
   await expect.poll(() => page.locator('.workshop-mechanic').getAttribute('data-action'), { timeout: 15000 }).toMatch(/weld|tighten|hammer|inspect|adjust|reconsider/);
   expect(await page.locator('.mechanic-drop-rope').evaluate(el => el.getBoundingClientRect().height)).toBeGreaterThan(20);
   await page.locator('.tool-card-link').first().click();
@@ -526,14 +531,14 @@ test('an idle mechanic can physically pull the cord and explain the action', asy
 test('focused project work survives a hidden tab and retargets a moved card', async ({ page }) => {
   await page.goto('/');
   await page.locator('.tool-card-link').first().focus();
-  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'ez-topology');
+  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'easyviewer');
   await page.waitForTimeout(700);
   const before = await page.locator('.workshop-mechanic').evaluate(el => el.style.transform);
   await page.evaluate(() => { Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' }); document.dispatchEvent(new Event('visibilitychange')); });
   await expect(page.locator('.workshop-scene')).toHaveAttribute('data-motion', 'paused');
   await page.evaluate(() => { Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' }); document.dispatchEvent(new Event('visibilitychange')); });
   await page.waitForTimeout(300);
-  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'ez-topology');
+  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'easyviewer');
   const after = await page.locator('.workshop-mechanic').evaluate(el => el.style.transform);
   // A resumed route continues from where it was paused, rather than respawning.
   const x = value => Number(value.match(/translate3d\(([-.\d]+)/)[1]);
@@ -543,13 +548,12 @@ test('focused project work survives a hidden tab and retargets a moved card', as
   await page.evaluate(() => {
     const grid = document.querySelector('.project-grid');
     const original = grid.firstElementChild;
-    for (let i = 0; i < 3; i++) {
-      const copy = original.cloneNode(true);
-      copy.dataset.projectId = `reflow-${i}`;
-      grid.insertBefore(copy, original);
-    }
+    // One card: the original moves sideways but stays on screen.
+    const copy = original.cloneNode(true);
+    copy.dataset.projectId = 'reflow';
+    grid.insertBefore(copy, original);
   });
-  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'ez-topology');
+  await expect(page.locator('.workshop-mechanic')).toHaveAttribute('data-project', 'easyviewer');
   await expect.poll(() => page.locator('.workshop-mechanic').getAttribute('data-action')).toMatch(/climb|walk/);
 });
 
@@ -567,7 +571,7 @@ test('workshop grows with eighteen cards and its full-size canopy stays visible 
       grid.append(copy);
     }
   });
-  await expect(page.locator('.tool-card')).toHaveCount(18);
+  await expect(page.locator('.project-grid').first().locator('.tool-card')).toHaveCount(18);
   const layout = await page.evaluate(() => {
     const last = document.querySelector('.tool-card:last-child').getBoundingClientRect();
     const rail = document.querySelector('.rail-left').getBoundingClientRect();

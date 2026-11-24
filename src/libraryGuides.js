@@ -1,6 +1,7 @@
 export const libraryGuides = {
   'ez-stitchnseam': {
     title: 'E-Z StitchNSeam',
+    betaName: 'the stitch beta',
     document: 'docs/E-Z-StitchNSeam-Guide.md',
     introduction: 'A practical guide to creating, editing and delivering live stitch geometry in 3ds Max.',
     comingSoon: ['Seam generation', 'Hole generation'],

@@ -6,6 +6,10 @@ export function Header({ page }) {
   const [cursorPaused, setCursorPaused] = useState(() => {
     try { return localStorage.getItem('goutam-lab-cursor-paused') === '1'; } catch { return false; }
   });
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-cursor-paused', cursorPaused);
+    return () => document.documentElement.removeAttribute('data-cursor-paused');
+  }, [cursorPaused]);
   const toggleCursor = () => {
     const paused = !cursorPaused;
     setCursorPaused(paused);
@@ -41,7 +45,7 @@ export function Header({ page }) {
       <div className="header-inner">
       <div className="brand-lockup"><a href="#/" className="wordmark" aria-label="GOUTAM Lab home">GOUTAM Lab</a>
         <button className="cursor-button" aria-label={`${cursorPaused ? 'Resume' : 'Pause'} logo cursor`} title={`${cursorPaused ? 'Resume' : 'Pause'} logo cursor`} aria-pressed={cursorPaused} onClick={toggleCursor}>
-          <span className={`brand-cursor${cursorPaused ? ' cursor-paused' : ''}`} aria-hidden="true">_</span>
+          <span className="brand-cursor" aria-hidden="true">_</span>
         </button>
       </div>
       <div className="header-actions">

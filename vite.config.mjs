@@ -14,6 +14,8 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     allowedHosts: ["terminal.local"],
+    // Playwright locks files here while tests run; watching them crashes the server.
+    watch: { ignored: ["**/artifacts/**", "**/dist/**"] },
     warmup: {
       clientFiles: ["./src/main.jsx"],
     },

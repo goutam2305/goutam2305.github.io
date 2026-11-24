@@ -1,22 +1,27 @@
 import { test, expect } from '@playwright/test';
 import os from 'node:os';
 import path from 'node:path';
+import { catalog, projects } from '../../src/projects.js';
+import { libraryGuides } from '../../src/libraryGuides.js';
 
-test('protected library releases have independent workflows and direct installer downloads', async ({ page }) => {
+const guided = (items) => items.filter((project) => libraryGuides[project.id]);
+
+test('each product with its own guide has an independent workflow, documentation and the right way to get it', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await expect(page.locator('.tool-card')).toHaveCount(3);
-  await expect(page.getByRole('heading', { level: 2, name: 'E-Z Topology' })).toBeVisible();
-  for (const [id, name, lastTab] of [
-    ['ez-stitchnseam', 'E-Z StitchNSeam', 'Materials & delivery'],
-    ['ez-reference', 'E-Z Reference', 'Keep images with the scene'],
-  ]) {
+  await expect(page.locator('.tool-card')).toHaveCount(projects.length);
+  for (const { id, name, tier } of guided(projects)) {
+    const { sections } = libraryGuides[id];
+    const lastTab = sections.at(-1).name;
     await page.goto(`/#/tools/${id}`);
     await expect(page).toHaveTitle(`${name} — GOUTAM Lab`);
     await expect(page.getByRole('heading', { level: 1, name })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Download .mzp', exact: true })).toBeVisible();
-    await expect(page.getByRole('tab')).toHaveCount(4);
+    const download = page.getByRole('link', { name: 'Download .mzp', exact: true });
+    const store = page.locator('.store-button');
+    await expect(tier === 'free' ? download : store).toBeVisible();
+    await expect(tier === 'free' ? store : download).toHaveCount(0);
+    await expect(page.getByRole('tab')).toHaveCount(sections.length);
     await expect(page.getByRole('tablist', { name: 'E-Z Topology tools' })).toHaveCount(0);
     await page.getByRole('tab', { name: lastTab, exact: true }).click();
     await expect(page.getByRole('tabpanel')).toContainText(lastTab);
@@ -27,22 +32,34 @@ test('protected library releases have independent workflows and direct installer
     await expect(page.getByRole('heading', { name: 'Draw', exact: true })).toHaveCount(0);
   }
   await expect(page.locator('.page-view')).toHaveCSS('opacity', '1');
-  await page.screenshot({ path: path.join(os.tmpdir(), 'goutam-library-reference-desktop.png'), fullPage: false });
+  await page.screenshot({ path: path.join(os.tmpdir(), 'goutam-library-desktop.png'), fullPage: false });
   expect(errors).toEqual([]);
 });
 
-test('reference documentation deep links and mobile layout remain usable', async ({ page }) => {
+test('hidden tools have no card, and their old tool and guide links show the not-found page', async ({ page }) => {
+  await page.goto('/');
+  for (const { id, name } of catalog.filter((project) => project.hidden)) {
+    await page.goto('/');
+    await expect(page.getByText(name)).toHaveCount(0);
+    for (const url of [`/#/tools/${id}`, `/#/docs/${id}`, `/#/docs/${id}?section=overview`]) {
+      await page.goto(url);
+      await expect(page.getByRole('heading', { level: 1, name: 'This page isn’t in the lab.' })).toBeVisible();
+    }
+  }
+});
+
+test('guide deep links and mobile layout remain usable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/#/docs/ez-reference?section=calibration');
-  await expect(page.getByRole('heading', { name: 'View, size & opacity', exact: true })).toBeFocused();
-  await expect(page.getByRole('heading', { name: 'View, size & opacity', exact: true })).toBeVisible();
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
-  expect(overflow).toBe(false);
-  await page.screenshot({ path: path.join(os.tmpdir(), 'goutam-library-reference-mobile.png'), fullPage: false });
-  await page.goto('/#/tools/ez-stitchnseam');
-  await page.getByRole('tab', { name: 'Patterns & thread', exact: true }).click();
-  await expect(page.getByRole('tabpanel')).toContainText('0.01 mm');
-  await expect(page.getByRole('tabpanel')).toContainText('not available in the stitch beta');
-  await expect(page.getByRole('link', { name: 'Download free', exact: true })).toHaveCount(0);
+  for (const { id } of guided(projects)) {
+    const section = libraryGuides[id].sections[1];
+    await page.goto(`/#/docs/${id}?section=${section.id}`);
+    await expect(page.getByRole('heading', { name: section.name, exact: true })).toBeFocused();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
+    await page.goto(`/#/tools/${id}`);
+    await page.getByRole('tab', { name: section.name, exact: true }).click();
+    await expect(page.getByRole('tabpanel')).toContainText(section.summary);
+    if (libraryGuides[id].comingSoon.length) await expect(page.getByRole('tabpanel')).toContainText(`not available in ${libraryGuides[id].betaName ?? 'this beta'}`);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
+  }
 });

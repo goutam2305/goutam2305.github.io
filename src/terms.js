@@ -1,6 +1,6 @@
-export const termsVersion = '2026-11-24';
+export const termsVersion = '2026-11-24.2';
 export const termsSections = [
-  ['What these terms cover', 'These terms cover only the free beta tools offered for download on this website: E-Z Topology, E-Z StitchNSeam and E-Z Reference. Below, “the free beta tools” means these tools and nothing else.'],
+  ['What these terms cover', 'These terms cover only the free beta tools offered for download on this website. Currently that is E-Z Topology. Below, “the free beta tools” means the free tools named here and nothing else.'],
   ['Paid products', 'EasyViewer is a paid product and is not covered by these terms. It is sold on Fab and licensed only through Fab. Nothing here gives permission to use, copy or share EasyViewer, or any other paid GOUTAM Lab product, for free.'],
   ['Free personal and commercial use', 'You may download, install, use, copy and share the unmodified free beta tools free of charge for personal and commercial work.'],
   ['Permission to modify the software', 'Modifying the free beta tools themselves requires prior consent from GOUTAM Lab. This includes changing their packaged scripts, libraries or installer.'],

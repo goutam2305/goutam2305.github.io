@@ -95,12 +95,12 @@ afterEach(() => {
   media.matches = false;
 });
 
-test('gallery has the four tools, Tools/About me navigation and a quiet footer', () => {
+test('gallery has EasyViewer and E-Z Topology, Tools/About me navigation and a quiet footer', () => {
   render(<App />);
   const navigation = screen.getByRole('navigation', { name: 'Main navigation' });
   assert.deepEqual(within(navigation).getAllByRole('link').map((link) => link.textContent), ['Tools', 'About me']);
-  assert.equal(screen.getAllByRole('article').length, 4);
-  assert.equal(screen.getAllByRole('img').length, 4);
+  assert.equal(screen.getAllByRole('article').length, 2);
+  assert.equal(screen.getAllByRole('img').length, 2);
   assert.equal(screen.queryByText('Segmentation'), null);
   assert.equal(screen.queryByText('Generate Mesh'), null);
   assert.equal(screen.getByRole('heading', { name: 'E-Z Topology' }).tagName, 'H2');
@@ -144,11 +144,31 @@ test('Available shows the available tools and the filter can return to All tools
   const input = user();
   await input.click(screen.getByRole('button', { name: 'Filter tools: All tools' }));
   await input.click(screen.getByRole('menuitemradio', { name: 'Available' }));
-  assert.equal(screen.queryAllByRole('article').length, 4);
+  assert.equal(screen.queryAllByRole('article').length, 2);
   await input.click(screen.getByRole('button', { name: 'Filter tools: Available' }));
   await input.click(screen.getByRole('menuitemradio', { name: 'All tools' }));
-  assert.equal(screen.getAllByRole('article').length, 4);
+  assert.equal(screen.getAllByRole('article').length, 2);
   assert.equal(document.activeElement, screen.getByRole('button', { name: 'Filter tools: All tools' }));
+});
+
+test('hidden tools are absent from the gallery and their old links show the not-found page', async () => {
+  render(<App />);
+  assert.equal(screen.queryByText(/StitchNSeam|E-Z Reference/), null);
+  for (const hash of ['#/tools/ez-stitchnseam', '#/docs/ez-reference']) {
+    await act(async () => {
+      window.history.replaceState(null, '', `/${hash}`);
+      window.dispatchEvent(new window.HashChangeEvent('hashchange'));
+    });
+    assert.ok(screen.getByRole('heading', { name: 'This page isn’t in the lab.' }));
+  }
+});
+
+test('pausing the logo cursor pauses every blinking cursor on the page', async () => {
+  render(<App />);
+  await user().click(screen.getByRole('button', { name: 'Pause logo cursor' }));
+  assert.ok(document.documentElement.hasAttribute('data-cursor-paused'));
+  await user().click(screen.getByRole('button', { name: 'Resume logo cursor' }));
+  assert.ok(!document.documentElement.hasAttribute('data-cursor-paused'));
 });
 
 test('filter dismisses on outside pointer interaction', async () => {

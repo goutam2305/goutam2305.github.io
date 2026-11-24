@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { projects, filterProjects, getDownloadUrl, parseRoute, getInitialTheme } from '../src/projects.js';
 
-test('E-Z Topology is first; Maya is planned, not a current platform', () => {
+test('EasyViewer is first; E-Z Topology plans Maya, not as a current platform', () => {
   assert.equal(projects[0].name, 'EasyViewer');
-  assert.deepEqual(projects.map((p) => p.tier), ['paid', 'free', 'free', 'free']);
-  assert.equal(projects.length, 4);
+  assert.deepEqual(projects.map((p) => p.tier), ['paid', 'free']);
+  assert.equal(projects.length, 2);
   const topology = projects.find((p) => p.id === 'ez-topology');
   assert.equal(topology.documentationUrl, '#/docs/ez-topology');
   assert.deepEqual(topology.platforms, ['3ds Max']);

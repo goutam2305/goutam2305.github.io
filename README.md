@@ -55,7 +55,7 @@ Edit **src/projects.js**. Project order in that array is the gallery order. Each
 
 ## E-Z Topology documentation and recordings
 
-E-Z Topology, E-Z StitchNSeam and E-Z Reference are listed. Topology contains a ten-part tool guide; the other products have independent settings/workflow guides.
+EasyViewer and E-Z Topology are listed. E-Z StitchNSeam and E-Z Reference are marked `hidden: true` in src/projects.js: they have no card, page or route, and their installer and guide are left out of the published build. To bring one back, remove `hidden`, name it in src/terms.js (and raise termsVersion), and run every test suite. Topology contains a ten-part tool guide; the other products have independent settings/workflow guides.
 
 - **src/guide.js** is the shared source for the online guide and downloadable Markdown. It describes the current beta's actual settings, controls, workflows and limits.
 - **public/demos/** contains real scripted captures of the tool running in 3ds Max 2026. Native viewport, actual cage/guide overlay and actual toolbar captures are composed together. They are not physical mouse recordings or generated animations.

@@ -35,7 +35,7 @@ export function LibraryGuide({ project }) {
       </div>
       <div className="guide-panel" role="tabpanel" id={`library-panel-${section.id}`} aria-labelledby={`library-tab-${section.id}`} tabIndex={0}>
         <div className="guide-demo"><h3>{section.name}</h3><p>{section.summary}</p><a className="back-link" href={`${project.documentationUrl}?section=${section.id}`}>Read this chapter <ArrowRight size={18} aria-hidden="true" /></a>
-          {guide.comingSoon.length > 0 && <p className="tool-notes">Coming soon: {guide.comingSoon.join(' and ').toLowerCase()}. These features are not available in this beta.</p>}
+          {guide.comingSoon.length > 0 && <p className="tool-notes">Coming soon: {guide.comingSoon.join(' and ').toLowerCase()}. These features are not available in {guide.betaName ?? 'this beta'}.</p>}
         </div><ToolInstructions tool={section} />
       </div>
     </section>

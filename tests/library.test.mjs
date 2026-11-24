@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { projects, parseRoute, getDownloadUrl } from '../src/projects.js';
+import { catalog, projects, parseRoute, getDownloadUrl } from '../src/projects.js';
 
 test('the three approved free releases resolve to intact distribution packages', () => {
-  const free = projects.filter((p) => p.release);
+  const free = catalog.filter((p) => p.release);
   assert.deepEqual(free.map((p) => p.id), ['ez-topology', 'ez-stitchnseam', 'ez-reference']);
   for (const project of free) {
     assert.ok(getDownloadUrl(project).endsWith(project.release.fileName));
@@ -21,11 +21,19 @@ test('the three approved free releases resolve to intact distribution packages',
 test('website assets allow only the approved MZPs and exclude loose private runtimes', () => {
   const names = readdirSync('public', { recursive: true });
   assert.deepEqual(names.filter((name) => /\.(?:mse|mcr|dll|py|pyc|cs|ms)$/i.test(name)), []);
-  assert.deepEqual(names.filter(name => /\.mzp$/i.test(name)).map(name => name.replaceAll('\\', '/')).sort(), projects.filter(project => project.release).map(project => `downloads/${project.release.fileName}`).sort());
+  assert.deepEqual(names.filter(name => /\.mzp$/i.test(name)).map(name => name.replaceAll('\\', '/')).sort(), catalog.filter(project => project.release).map(project => `downloads/${project.release.fileName}`).sort());
 });
 
-test('new tool documentation routes resolve to their own project', () => {
-  for (const id of ['ez-stitchnseam', 'ez-reference', 'easyviewer']) {
+test('only EasyViewer and E-Z Topology are on the site; hidden tools have no page or guide route', () => {
+  assert.deepEqual(projects.map((p) => p.id), ['easyviewer', 'ez-topology']);
+  assert.deepEqual(catalog.filter((p) => p.hidden).map((p) => p.id), ['ez-stitchnseam', 'ez-reference']);
+  for (const { id } of catalog.filter((p) => p.hidden)) {
+    for (const hash of [`#/tools/${id}`, `#/docs/${id}`, `#/docs/${id}?section=overview`]) assert.equal(parseRoute(hash).page, 'not-found', hash);
+  }
+});
+
+test('product documentation routes resolve to their own project', () => {
+  for (const { id } of projects.filter((p) => p.id !== 'ez-topology')) {
     const route = parseRoute(`#/docs/${id}?section=overview`);
     assert.equal(route.page, 'product-documentation');
     assert.equal(route.project.id, id);
@@ -84,8 +92,8 @@ test('software terms cover exactly the free tools and exclude every paid product
   const section = (title) => termsSections.find(([name]) => name === title)[1];
   const scope = section('What these terms cover');
   const paid = section('Paid products');
-  for (const project of projects) {
-    assert.equal(scope.includes(project.name), project.tier === 'free', `${project.name} in the terms scope`);
+  for (const project of catalog) {
+    assert.equal(scope.includes(project.name), project.tier === 'free' && !project.hidden, `${project.name} in the terms scope`);
     assert.equal(paid.includes(project.name), project.tier === 'paid', `${project.name} in the paid section`);
   }
   assert.match(paid, /licensed only through Fab/);
