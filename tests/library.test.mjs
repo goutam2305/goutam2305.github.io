@@ -78,3 +78,32 @@ test('paid product guides never show 3ds Max install steps or free-beta terms', 
     assert.ok(file.includes(guide.platform) && file.includes(guide.installNote), `${guide.document} is out of date`);
   }
 });
+
+test('software terms cover exactly the free tools and exclude every paid product', async () => {
+  const { termsSections, termsText } = await import('../src/terms.js');
+  const section = (title) => termsSections.find(([name]) => name === title)[1];
+  const scope = section('What these terms cover');
+  const paid = section('Paid products');
+  for (const project of projects) {
+    assert.equal(scope.includes(project.name), project.tier === 'free', `${project.name} in the terms scope`);
+    assert.equal(paid.includes(project.name), project.tier === 'paid', `${project.name} in the paid section`);
+  }
+  assert.match(paid, /licensed only through Fab/);
+  assert.doesNotMatch(termsText, /GOUTAM Lab tools/, 'grants must name the free beta tools, not every GOUTAM Lab tool');
+  assert.equal(readFileSync('public/docs/GOUTAM-Lab-Software-Terms.txt', 'utf8').replaceAll('\r\n', '\n'), termsText);
+});
+
+test('paid products are sold on Fab only and free tools are downloaded here only', async () => {
+  const { getStoreUrl } = await import('../src/projects.js');
+  for (const project of projects) {
+    if (project.tier === 'paid') {
+      assert.equal(getDownloadUrl(project), null, `${project.id} must not be downloadable from the site`);
+      assert.ok(getStoreUrl(project));
+      assert.match(project.support, /licensed only through Fab/);
+    } else {
+      assert.equal(project.tier, 'free');
+      assert.ok(getDownloadUrl(project));
+      assert.equal(getStoreUrl(project), null);
+    }
+  }
+});

@@ -87,4 +87,4 @@ The workshop mechanic travels along the sagging rope and descends beside hovered
 
 There is no header scene-pause control; reduced motion and hidden tabs automatically stop decorative motion and physics. Existing logo cursor and GIF controls remain independent. Mechanic decisions and dialogue run locally, with no AI service or network requests.
 
-The tools are free for personal and commercial use; modifying the software requires prior GOUTAM Lab consent. Settings, projects and generated outputs may be freely edited and used. See public/docs/GOUTAM-Lab-Software-Terms.txt and src/terms.js. This is not an open-source license; the site's original code has no additional public modification grant.
+The free E-Z beta tools are free for personal and commercial use; modifying them requires prior GOUTAM Lab consent. EasyViewer is a paid product, sold and licensed only through Fab, and is not covered by these terms. Settings, projects and generated outputs may be freely edited and used. See public/docs/GOUTAM-Lab-Software-Terms.txt and src/terms.js. This is not an open-source license; the site's original code has no additional public modification grant.

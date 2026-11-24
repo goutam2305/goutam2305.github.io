@@ -1,6 +1,6 @@
 # EasyViewer - User guide
 
-GOUTAM Lab | Unreal Engine 5.1 – 5.9 | Paid, on Fab
+GOUTAM Lab | Unreal Engine 5.1 – 5.9 | Paid, licensed through Fab
 
 Set up an orbit viewer, hotspots and item inspection in your Unreal Engine project. Everything is Blueprint, so every graph can be opened and changed.
 

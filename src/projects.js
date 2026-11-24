@@ -30,7 +30,7 @@ export const projects = [
       ['Item inspection', 'Call Inspect Item from gameplay: the item flies into the player’s hands, turns freely and goes back exactly where it was.'],
       ['Turntable mode', 'Drag on the object to spin it, drag anywhere else to orbit the camera. Works with touch on mobile.'],
     ],
-    support: 'Blueprint only, no code modules. Tested on every Unreal Engine version from 5.1 to 5.9 on Windows, and on Android. Builds for Windows, macOS, Linux, Android and iOS. Available on Fab.',
+    support: 'Blueprint only, no code modules. Tested on every Unreal Engine version from 5.1 to 5.9 on Windows, and on Android. Builds for Windows, macOS, Linux, Android and iOS. Paid product, sold and licensed only through Fab.',
   },
   {
     id: 'ez-topology',
