@@ -1,10 +1,10 @@
 # EasyViewer - User guide
 
-GOUTAM Lab | 3ds Max 2026 | Free beta preview
+GOUTAM Lab | Unreal Engine 5.1 – 5.9 | Paid, on Fab
 
 Set up an orbit viewer, hotspots and item inspection in your Unreal Engine project. Everything is Blueprint, so every graph can be opened and changed.
 
-Download the free MZP from the tool page on the GOUTAM Lab website and accept the software terms. Drag the MZP into Max to open Install / Repair. Free personal and commercial use; modifying the software requires prior GOUTAM Lab consent.
+EasyViewer is a complete Unreal Engine project. In the Epic Games Launcher, find it in your Fab library and choose Create Project, then open the EV_Demo map and press Play. To use it in a project you already have, right-click the EasyViewer folder in the Content Browser and choose Migrate.
 
 ## Orbit viewer
 

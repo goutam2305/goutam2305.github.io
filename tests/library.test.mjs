@@ -64,3 +64,17 @@ test('EasyViewer gallery images exist and each has a title and caption', () => {
     assert.ok(shot.title && shot.text && shot.alt);
   }
 });
+
+test('paid product guides never show 3ds Max install steps or free-beta terms', async () => {
+  const { libraryGuides } = await import('../src/libraryGuides.js');
+  const wrong = /3ds ?Max|\bMZP\b|into Max|free beta|software terms|free personal/i;
+  for (const project of projects.filter((item) => item.tier === 'paid')) {
+    const guide = libraryGuides[project.id];
+    assert.ok(guide.platform && guide.availability && guide.installNote, `${project.id} needs its own platform, availability and installNote`);
+    assert.doesNotMatch(JSON.stringify(guide), wrong);
+    assert.doesNotMatch(JSON.stringify(project), wrong);
+    const file = readFileSync(`public/${guide.document}`, 'utf8');
+    assert.doesNotMatch(file, wrong);
+    assert.ok(file.includes(guide.platform) && file.includes(guide.installNote), `${guide.document} is out of date`);
+  }
+});
