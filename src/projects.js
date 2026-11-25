@@ -15,7 +15,7 @@ export const catalog = [
     platforms: ['Unreal Engine 5.1 – 5.9'],
     plannedPlatforms: [],
     downloadUrl: null,
-    storeUrl: 'https://www.fab.com/search?q=EasyViewer',
+    storeUrl: 'https://www.fab.com/listings/705bcc08-2dba-4477-af1f-22d955d5f8c9',
     storeLabel: 'Get it on Fab',
     gallery: [
       { src: asset('easyviewer/00_overview.jpg'), title: 'EasyViewer 3.0', text: 'Orbit viewer, hotspots, item inspection and turntable. Blueprint only, UE 5.1 – 5.9, mouse, touch and gamepad.', alt: 'EasyViewer screenshot: easyviewer 3.0.' },

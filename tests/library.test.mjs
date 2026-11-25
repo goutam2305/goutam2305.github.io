@@ -60,7 +60,7 @@ test('EasyViewer links to its Fab listing and has no local download', async () =
   const { getStoreUrl } = await import('../src/projects.js');
   const viewer = projects.find((p) => p.id === 'easyviewer');
   assert.equal(viewer.downloadUrl, null);
-  assert.ok(getStoreUrl(viewer).startsWith('https://www.fab.com/'));
+  assert.equal(getStoreUrl(viewer), 'https://www.fab.com/listings/705bcc08-2dba-4477-af1f-22d955d5f8c9');
   assert.equal(getStoreUrl({ storeUrl: 'https://evil.example/fab' }), null);
 });
 
