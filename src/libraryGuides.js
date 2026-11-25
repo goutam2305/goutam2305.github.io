@@ -75,7 +75,7 @@ export const libraryGuides = {
   'easyviewer': {
     title: 'EasyViewer',
     document: 'docs/EasyViewer-Guide.md',
-    platform: 'Unreal Engine 5.1 – 5.9',
+    platform: 'Unreal Engine 5.0 – 5.9',
     availability: 'Paid, licensed through Fab',
     installNote: 'EasyViewer is a complete Unreal Engine project. In the Epic Games Launcher, find it in your Fab library and choose Create Project, then open the EV_Demo map and press Play. To use it in a project you already have, right-click the EasyViewer folder in the Content Browser and choose Migrate.',
     introduction: 'Set up an orbit viewer, hotspots and item inspection in your Unreal Engine project. Everything is Blueprint, so every graph can be opened and changed.',
